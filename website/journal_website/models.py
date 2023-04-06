@@ -9,51 +9,51 @@ class String(models.Model):
         verbose_name_plural = 'strings'
 
 class StaticPage(models.Model):
-    name = models.ForeignKey(String, related_name='static_pages', on_delete=models.CASCADE)
+    name = models.ForeignKey(String, related_name='static_page_name', on_delete=models.CASCADE)
     relative_url_address = models.TextField()
 
     class Meta:
         verbose_name_plural = 'static_pages'
 
 class ScientificPublication(models.Model):
-    full_name = models.ForeignKey(String, related_name='scientific_publications', on_delete=models.CASCADE)
-    short_name = models.ForeignKey(String, related_name='scientific_publications', on_delete=models.CASCADE)
-    contacts = models.ForeignKey(StaticPage, related_name='scientific_publications', on_delete=models.DO_NOTHING)
-    main_editor = models.ForeignKey(StaticPage, related_name='scientific_publications', on_delete=models.DO_NOTHING)
-    legal_information = models.ForeignKey(StaticPage, related_name='scientific_publications', on_delete=models.DO_NOTHING)
-    contract_information = models.ForeignKey(StaticPage, related_name='scientific_publications', on_delete=models.DO_NOTHING)
-    science_branches = models.ForeignKey(StaticPage, related_name='scientific_publications', on_delete=models.DO_NOTHING)
-    editorial_team = models.ForeignKey(StaticPage, related_name='scientific_publications', on_delete=models.DO_NOTHING)
+    full_name = models.ForeignKey(String, related_name='scientific_publication_full_name', on_delete=models.CASCADE)
+    short_name = models.ForeignKey(String, related_name='scientific_publication_short_name', on_delete=models.CASCADE)
+    contacts = models.ForeignKey(StaticPage, related_name='scientific_publication_contacts', on_delete=models.DO_NOTHING)
+    main_editor = models.ForeignKey(StaticPage, related_name='scientific_publication_main_editor', on_delete=models.DO_NOTHING)
+    legal_information = models.ForeignKey(StaticPage, related_name='scientific_publication_legal_information', on_delete=models.DO_NOTHING)
+    contract_information = models.ForeignKey(StaticPage, related_name='scientific_publication_contract_information', on_delete=models.DO_NOTHING)
+    science_branches = models.ForeignKey(StaticPage, related_name='scientific_publication_science_branches', on_delete=models.DO_NOTHING)
+    editorial_team = models.ForeignKey(StaticPage, related_name='scientific_publication_editorial_team', on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name_plural = 'scientific_publications'
 
 class Volume(models.Model):
-    name = models.ForeignKey(String, related_name='volumes', on_delete=models.CASCADE)
-    scientific_publication = models.ForeignKey(ScientificPublication, related_name='volumes', on_delete=models.DO_NOTHING)
+    name = models.ForeignKey(String, related_name='volume_name', on_delete=models.CASCADE)
+    scientific_publication = models.ForeignKey(ScientificPublication, related_name='volume_scientific_publication', on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name_plural = 'volumes'
 
 class ScientificSpecialty(models.Model):
-    name = models.ForeignKey(String, related_name='scientific_specialties', on_delete=models.CASCADE)
-    science_branches = models.ForeignKey(StaticPage, related_name='scientific_specialties', on_delete=models.DO_NOTHING)
+    name = models.ForeignKey(String, related_name='scientific_specialty_name', on_delete=models.CASCADE)
+    science_branches = models.ForeignKey(StaticPage, related_name='scientific_specialty_science_branches', on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name_plural = 'scientific_specialties'  
 
 class Category(models.Model):
-    name = models.ForeignKey(String, related_name='categories', on_delete=models.CASCADE)
-    scientific_specialty = models.ForeignKey(ScientificSpecialty, related_name='categories', on_delete=models.DO_NOTHING)
-    scientific_publication = models.ForeignKey(ScientificPublication, related_name='categories', on_delete=models.DO_NOTHING)
+    name = models.ForeignKey(String, related_name='category_name', on_delete=models.CASCADE)
+    scientific_specialty = models.ForeignKey(ScientificSpecialty, related_name='category_scientific_specialty', on_delete=models.DO_NOTHING)
+    scientific_publication = models.ForeignKey(ScientificPublication, related_name='category_scientific_publication', on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name_plural = 'categories'
 
 class Founder(models.Model):
-    full_name = models.ForeignKey(String, related_name='founders', on_delete=models.CASCADE)
-    scientific_publication = models.ForeignKey(ScientificPublication, related_name='founders', on_delete=models.DO_NOTHING)
-    contacts = models.ForeignKey(StaticPage, related_name='founders', on_delete=models.DO_NOTHING)
+    full_name = models.ForeignKey(String, related_name='founder_full_name', on_delete=models.CASCADE)
+    scientific_publication = models.ForeignKey(ScientificPublication, related_name='founder_scientific_publication', on_delete=models.DO_NOTHING)
+    contacts = models.ForeignKey(StaticPage, related_name='founder_contacts', on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name_plural = 'founders'
@@ -72,21 +72,21 @@ class User(models.Model):
         verbose_name_plural = 'users'
 
 class Article(models.Model):
-    name = models.ForeignKey(String, related_name='articles', on_delete=models.CASCADE)
-    short_description = models.ForeignKey(String, related_name='articles', on_delete=models.CASCADE)
+    name = models.ForeignKey(String, related_name='article_name', on_delete=models.CASCADE)
+    short_description = models.ForeignKey(String, related_name='article_short_description', on_delete=models.CASCADE)
     publication_date = models.DateField()
     file_name = models.TextField()
     authors = models.TextField()
-    user = models.ForeignKey(User, related_name='articles', on_delete=models.DO_NOTHING)
-    volume = models.ForeignKey(Volume, related_name='articles', on_delete=models.DO_NOTHING)
-    category = models.ForeignKey(Category, related_name='articles', on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, related_name='article_user', on_delete=models.DO_NOTHING)
+    volume = models.ForeignKey(Volume, related_name='article_volume', on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(Category, related_name='article_category', on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name_plural = 'articles'
 
 class Feedback(models.Model):
     comment = models.TextField()
-    article = models.ForeignKey(Article, related_name='feedbacks', on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, related_name='feedback_article', on_delete=models.CASCADE)
     publication_date = models.DateField()
     decision = models.CharField(max_length=20, choices=[('accepted', 'Accepted'), ('rejected', 'Rejected')])
 
