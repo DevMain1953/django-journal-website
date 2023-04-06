@@ -51,7 +51,7 @@ class Category(models.Model):
         verbose_name_plural = 'categories'
 
 class Founder(models.Model):
-    full_name = models.ForeignKey(String, related_name='founders', on_delete=models.CASCADE)
+    full_name = models.ForeignKey(String, on_delete=models.CASCADE)
     scientific_publication = models.ForeignKey(ScientificPublication, related_name='founders', on_delete=models.DO_NOTHING)
     contacts = models.ForeignKey(StaticPage, related_name='founders', on_delete=models.DO_NOTHING)
 
