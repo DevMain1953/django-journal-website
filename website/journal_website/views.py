@@ -8,9 +8,9 @@ def register_user(request):
     error_message = ''
 
     if request.method == 'POST':
-        registration_form = RegistrationForm(request.POST)
-        if registration_form.is_valid():
-            registration_form.save()
+        data_from_form = RegistrationForm(request.POST)
+        if data_from_form.is_valid():
+            data_from_form.save()
             return redirect('home')
         else:
             error_message = 'Form is invalid'
