@@ -15,7 +15,7 @@ def register_user(request):
         else:
             error_message = 'Form is invalid'
 
-    registration_form = RegistrationForm(request.POST)
+    registration_form = RegistrationForm()
     data_to_show_in_template = {
         'form': registration_form,
         'error': error_message
