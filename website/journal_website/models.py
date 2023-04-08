@@ -3,7 +3,7 @@ import uuid
 
 class String(models.Model):
     russian = models.TextField()
-    english = models.TextField()
+    english = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'strings'
@@ -77,7 +77,7 @@ class Article(models.Model):
     publication_date = models.DateField()
     file_name = models.TextField()
     authors = models.TextField()
-    user = models.ForeignKey(User, related_name='article_user', on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, related_name='article_custom_user', on_delete=models.DO_NOTHING)
     volume = models.ForeignKey(Volume, related_name='article_volume', on_delete=models.DO_NOTHING)
     category = models.ForeignKey(Category, related_name='article_category', on_delete=models.DO_NOTHING)
 
