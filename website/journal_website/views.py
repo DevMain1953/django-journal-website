@@ -63,9 +63,9 @@ def reset_password(request):
 	if request.user.is_authenticated:
 		return redirect("homepage")
 	if request.method == "POST":
-		password_reset_form = PasswordResetForm(request.POST)
-		if password_reset_form.is_valid():
-			user_email = password_reset_form.cleaned_data['email']
+		filled_password_reset_form = PasswordResetForm(request.POST)
+		if filled_password_reset_form.is_valid():
+			user_email = filled_password_reset_form.cleaned_data['email']
 			associated_users = User.objects.filter(Q(email=user_email))
 			if associated_users.exists():
 				for user in associated_users:
@@ -86,5 +86,6 @@ def reset_password(request):
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')
 					return redirect ("/password_reset/done/")
+		messages.error(request, 'An invalid email has been entered.')
 	password_reset_form = PasswordResetForm()
 	return render(request=request, template_name="authentication/password/password_reset.html", context={"password_reset_form":password_reset_form})
