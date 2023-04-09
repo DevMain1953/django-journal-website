@@ -1,0 +1,29 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}<title>Registration</title>{% endblock %}
+
+{% block body %}
+
+{% load crispy_forms_tags %}   
+
+<body>
+<div class="container py-5">
+  <h1>Registration</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ registration_form|crispy }}
+
+    {% if messages %}
+    <div class="alert alert-danger" role="alert">
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">Create account</button>
+  </form>
+  <p class="text-center">Already have an account? <a href="/authorization">Login</a>.</p>
+</div>
+</body>
+{% endblock %}

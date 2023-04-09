@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 import uuid
 
@@ -58,18 +59,14 @@ class Founder(models.Model):
     class Meta:
         verbose_name_plural = 'founders'
 
-class User(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+class UserAdditionalData(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     middle_name = models.CharField(max_length=50, blank=True, null=True)
-    nickname = models.TextField()
-    password = models.TextField()
-    email = models.EmailField()
     confirmed = models.BooleanField(default=False)
     code = models.UUIDField(default=uuid.uuid4, editable=False)
 
     class Meta:
-        verbose_name_plural = 'users'
+        verbose_name_plural = 'user_additional_data'
 
 class Article(models.Model):
     name = models.ForeignKey(String, related_name='article_name', on_delete=models.CASCADE)

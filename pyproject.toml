@@ -9,6 +9,8 @@ packages = [{include = "journal_website"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 django = "^4.2"
+django-crispy-forms = "^2.0"
+crispy-bootstrap4 = "^2022.1"
 
 
 [build-system]
