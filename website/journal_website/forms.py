@@ -17,6 +17,7 @@ class UserRegistrationForm(UserCreationForm):
 		new_user.email = self.cleaned_data['email']
 		new_user.first_name = self.cleaned_data['first_name']
 		new_user.last_name = self.cleaned_data['last_name']
+		new_user.is_active = False
 		if commit:
 			new_user.save()
 		return new_user

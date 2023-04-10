@@ -1,34 +1,27 @@
 {% extends 'main/layout.html' %}
 
-{% block title %}Finishing account{% endblock %}
+{% block title %}<title>Settings</title>{% endblock %}
 
 {% block body %}
+<body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="/">Home</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav mr-auto">
-        {% if user.is_authenticated %}
-        
+      <ul class="navbar-nav mr-auto">      
         <li class="nav-item">
           <a class="nav-link" href="#">Welcome, {{user.username}}</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout">Logout</a>
-        </li>    
-        {% else %}
-  
-        <li class="nav-item">
-          <a class="nav-link" href="/registration">Sign Up</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/authorization">Sign In</a>
-        </li>
-  
-        {% endif %}
       </ul>
     </div>
 </nav>
+
+<p><a href="#" class="btn btn-primary">Change password</a></p>
+
+</body>
 {% endblock %}
