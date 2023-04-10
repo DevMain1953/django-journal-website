@@ -6,11 +6,8 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse
-from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_bytes
 
 from .forms import UserRegistrationForm, UserAdditionalDataForm
 from .models import UserAdditionalData
@@ -18,7 +15,7 @@ from .services.EmailService import EmailService
 from .repositories.UserAdditionalDataRepository import UserAdditionalDataRepository
 
 email_service = EmailService()
-user_repository = UserAdditionalDataRepository(UserAdditionalData)
+user_additional_data_repository = UserAdditionalDataRepository(UserAdditionalData)
 
 
 def display_homepage(request):
@@ -30,11 +27,11 @@ def change_user_additional_data(request):
 	if request.method == 'POST':
 		filled_user_additional_data_form = UserAdditionalDataForm(request.POST)
 		if filled_user_additional_data_form.is_valid():
-			user_repository.save_middle_name_for_user(user=request.user, new_middle_name=filled_user_additional_data_form.cleaned_data['middle_name'])
+			user_additional_data_repository.save_middle_name_for_user(user=request.user, new_middle_name=filled_user_additional_data_form.cleaned_data['middle_name'])
 			return redirect("homepage")
 		else:
 			messages.error(request, 'Form is invalid!')
-	user_additional_data_form = UserAdditionalDataForm(initial={"middle_name": user_repository.get_middle_name_for_user(user=request.user)})
+	user_additional_data_form = UserAdditionalDataForm(initial={"middle_name": user_additional_data_repository.get_middle_name_for_user(user=request.user)})
 	return render(request, 'user/account_settings.html', {'user_additional_data_form': user_additional_data_form})
 
 
