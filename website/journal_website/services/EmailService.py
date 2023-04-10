@@ -7,19 +7,20 @@ from django.http import HttpResponse
 
 
 class EmailService:
-
-
-    @staticmethod
-    def send_email_message(sender, receiver, subject, email_template_name):
+    def send_email_message(self, sender, receiver, subject, email_template_name, code=None):
         content = {
-            "email":receiver.email,
-            'domain':'127.0.0.1:8000',
+            "email": receiver.email,
+            'domain': '127.0.0.1:8000',
 			'site_name': 'Website',
-			"uid": urlsafe_base64_encode(force_bytes(receiver.pk)),
-			"user": receiver,
-			'token': default_token_generator.make_token(receiver),
+            "user": receiver,
 			'protocol': 'http',
         }
+        if code is not None:
+            content["code"] = code
+        else:
+            content["uid"] = urlsafe_base64_encode(force_bytes(receiver.pk))
+            content["token"] = default_token_generator.make_token(receiver)
+
         message = render_to_string(email_template_name, content)
         try:
             send_mail(subject, message, sender , [receiver.email], fail_silently=False)

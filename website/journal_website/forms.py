@@ -2,6 +2,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from django.forms import ModelForm
+from .models import UserAdditionalData
+
 
 class UserRegistrationForm(UserCreationForm):
 	email = forms.EmailField(required=True)
@@ -21,3 +24,9 @@ class UserRegistrationForm(UserCreationForm):
 		if commit:
 			new_user.save()
 		return new_user
+
+
+class UserAdditionalDataForm(ModelForm):
+	class Meta:
+		model = UserAdditionalData
+		fields = ["middle_name"]

@@ -3,8 +3,10 @@ from . import views
 
 urlpatterns = [
     path("", views.display_homepage, name="homepage"),
-    path("account_settings", views.display_account_settings_page, name="account_settings"),
-    path("account_activation/<uidb64>/<token>/", views.activate_user_account, name="account_activation"),
+    path("account_settings", views.change_user_additional_data, name="account_settings"),
+    path("password_change", views.change_user_password, name="password_change"),
+    
+    path("account_activation/<code>/", views.activate_user_account, name="account_activation"),
 
     path("registration", views.register_new_user, name="registration"),
     path("authorization", views.authorize_user, name="authorization"),
