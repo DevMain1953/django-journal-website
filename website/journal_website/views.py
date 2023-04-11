@@ -15,7 +15,7 @@ from .services.EmailService import EmailService
 from .repositories.UserAdditionalDataRepository import UserAdditionalDataRepository
 
 email_service = EmailService()
-user_additional_data_repository = UserAdditionalDataRepository(UserAdditionalData)
+user_additional_data = UserAdditionalDataRepository(UserAdditionalData)
 
 
 def display_homepage(request):
@@ -27,11 +27,11 @@ def change_user_additional_data(request):
 	if request.method == 'POST':
 		filled_user_additional_data_form = UserAdditionalDataForm(request.POST)
 		if filled_user_additional_data_form.is_valid():
-			user_additional_data_repository.save_middle_name_for_user(user=request.user, new_middle_name=filled_user_additional_data_form.cleaned_data['middle_name'])
+			user_additional_data.save_middle_name_for_user(user=request.user, new_middle_name=filled_user_additional_data_form.cleaned_data['middle_name'])
 			return redirect("homepage")
 		else:
 			messages.error(request, 'Form is invalid!')
-	user_additional_data_form = UserAdditionalDataForm(initial={"middle_name": user_additional_data_repository.get_middle_name_for_user(user=request.user)})
+	user_additional_data_form = UserAdditionalDataForm(initial={"middle_name": user_additional_data.get_middle_name_for_user(user=request.user)})
 	return render(request, 'user/account_settings.html', {'user_additional_data_form': user_additional_data_form})
 
 
