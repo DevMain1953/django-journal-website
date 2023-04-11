@@ -12,3 +12,7 @@ class UserAdditionalDataRepository:
     def get_middle_name_for_user(self, user):
         user_additional_data = self.user_additional_data_model.objects.get(user=user)
         return user_additional_data.middle_name
+    
+
+    def get_object_by_user(self, user):
+        return self.user_additional_data_model.objects.get(user=user)

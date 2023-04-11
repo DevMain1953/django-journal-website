@@ -31,7 +31,7 @@ def change_user_additional_data(request):
 			return redirect("homepage")
 		else:
 			messages.error(request, 'Form is invalid!')
-	user_additional_data_form = UserAdditionalDataForm(initial={"middle_name": user_additional_data.get_middle_name_for_user(user=request.user)})
+	user_additional_data_form = UserAdditionalDataForm(instance=user_additional_data.get_object_by_user(user=request.user))
 	return render(request, 'user/account_settings.html', {'user_additional_data_form': user_additional_data_form})
 
 
