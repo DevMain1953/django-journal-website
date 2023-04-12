@@ -1,0 +1,71 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}<title>Account settings</title>{% endblock %}
+
+{% block body %}
+
+{% load crispy_forms_tags %} 
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Home</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">      
+        <li class="nav-item">
+          <a class="nav-link" href="#">Welcome, {{user.username}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+      </ul>
+    </div>
+</nav>
+
+<p><a href="#" class="btn btn-primary">Add article</a></p>
+
+<h2>List of articles</h2>
+
+<nav aria-label="Page navigation">
+  <ul class="pagination pagination-lg">
+    {% block pagination %}
+    {% for number_of_page in pagination_for_articles.paginator.get_elided_page_range %}
+        {% if number_of_page == pagination_for_articles.paginator.ELLIPSIS %}
+          {{ number_of_page }}
+        {% else %}
+          {% if number_of_page == pagination_for_articles.number %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1">{{ number_of_page }}</a>
+            </li>
+          {% else %}
+              <li class="page-item"><a class="page-link" href="{% url 'articles_with_pagination' number_of_page %}">{{ number_of_page }}</a></li>
+          {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% endblock %}
+  </ul>
+</nav>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% block article %}
+        {% for article in pagination_for_articles %}
+          <tr>
+            <td>{{ article }}</td>
+          </tr>
+        {% endfor %}
+      {% endblock %}
+    </tbody>
+  </table>
+</div>
+
+</body>
+{% endblock %}

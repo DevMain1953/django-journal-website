@@ -10,16 +10,22 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 
 from .forms import UserRegistrationForm, UserAdditionalDataForm
-from .models import UserAdditionalData
-from .services.EmailService import EmailService
-from .repositories.UserAdditionalDataRepository import UserAdditionalDataRepository
+from .models import UserAdditionalData, Article
+from .services import EmailService
+from .repositories import UserAdditionalDataRepository, ArticleRepository
 
-email_service = EmailService()
-user_additional_data = UserAdditionalDataRepository(UserAdditionalData)
+email_service = EmailService.EmailService()
+user_additional_data = UserAdditionalDataRepository.UserAdditionalDataRepository(UserAdditionalData)
+article = ArticleRepository.ArticleRepository(Article)
 
 
 def display_homepage(request):
     return render(request, "static_pages/homepage.html")
+
+
+def display_page_with_articles(request, number_of_page):
+	pagination_for_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_articles(), number_of_articles_per_page=10, number_of_page_to_display=number_of_page)
+	return render(request, "user/articles.html", {'pagination_for_articles': pagination_for_articles})
 
 
 @login_required
