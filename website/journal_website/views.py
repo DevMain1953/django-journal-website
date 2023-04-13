@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 
 from .forms import UserRegistrationForm, UserAdditionalDataForm
-from .models import UserAdditionalData, Article, ScientificPublication
+from .models import UserAdditionalData, Article, ScientificPublication, Volume, Category
 from .services import EmailService
 from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository
 
@@ -29,9 +29,15 @@ def display_page_with_articles(request, number_of_page):
 	return render(request, "article/articles.html", {'pagination_for_articles': pagination_for_articles})
 
 
+@login_required
 def display_page_with_scientific_publications(request, number_of_page):
 	pagination_for_scientific_publications = scientific_publication.get_pagination_for_list_of_scientific_publications(list_of_scientific_publications=scientific_publication.get_all_scientific_publications(), number_of_scientific_publications_per_page=5, number_of_page_to_display=number_of_page)
 	return render(request, "scientific_publication/scientific_publications.html", {'pagination_for_scientific_publications': pagination_for_scientific_publications})
+
+
+@login_required
+def add_new_article(request, pk_of_scientific_publication):
+	pass
 
 
 @login_required

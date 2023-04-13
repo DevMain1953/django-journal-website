@@ -60,7 +60,7 @@
       {% block scientific_publication %}
         {% for scientific_publication in pagination_for_scientific_publications %}
           <tr>
-            <td>{{ scientific_publication.full_name }}</td>
+            <td><a href="{% url 'scientific_publication' scientific_publication.pk %}">{{ scientific_publication.full_name }}</a></td>
             <td>{{ scientific_publication.short_name }}</td>
           </tr>
         {% endfor %}
