@@ -1,6 +1,6 @@
 {% extends 'main/layout.html' %}
 
-{% block title %}<title>Account settings</title>{% endblock %}
+{% block title %}<title>Articles</title>{% endblock %}
 
 {% block body %}
 
@@ -13,13 +13,15 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav mr-auto">      
+      <ul class="navbar-nav mr-auto">
+        {% if user.is_authenticated %} 
         <li class="nav-item">
           <a class="nav-link" href="#">Welcome, {{user.username}}</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout">Logout</a>
         </li>
+        {% endif %}
       </ul>
     </div>
 </nav>
@@ -53,13 +55,19 @@
     <thead>
       <tr>
         <th>Name</th>
+        <th>Short description</th>
+        <th>Uploaded by</th>
+        <th>Publication date</th>
       </tr>
     </thead>
     <tbody>
       {% block article %}
         {% for article in pagination_for_articles %}
           <tr>
-            <td>{{ article }}</td>
+            <td>{{ article.name }}</td>
+            <td>{{ article.short_description }}</td>
+            <td>{{ article.user }}</td>
+            <td>{{ article.publication_date }}</td>
           </tr>
         {% endfor %}
       {% endblock %}

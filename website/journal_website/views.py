@@ -24,8 +24,8 @@ def display_homepage(request):
 
 
 def display_page_with_articles(request, number_of_page):
-	pagination_for_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_articles(), number_of_articles_per_page=10, number_of_page_to_display=number_of_page)
-	return render(request, "user/articles.html", {'pagination_for_articles': pagination_for_articles})
+	pagination_for_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_articles(), number_of_articles_per_page=5, number_of_page_to_display=number_of_page)
+	return render(request, "article/articles.html", {'pagination_for_articles': pagination_for_articles})
 
 
 @login_required
