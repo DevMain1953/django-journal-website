@@ -37,7 +37,7 @@ def display_page_with_scientific_publications(request, number_of_page):
 
 @login_required
 def add_new_article(request, pk_of_scientific_publication):
-	pass
+	return HttpResponse("Adding new article")
 
 
 @login_required

@@ -7,7 +7,7 @@ urlpatterns = [
     path("password_change", views.change_user_password, name="password_change"),
     path("articles/<int:number_of_page>", views.display_page_with_articles, name="articles_with_pagination"),
     path("scientific_publications/<int:number_of_page>", views.display_page_with_scientific_publications, name="scientific_publications_with_pagination"),
-    path("scientific_publication/<int:pk_of_scientific_publication>", views.add_new_article, name="scientific_publication"),
+    path("scientific_publication/<int:pk_of_scientific_publication>/add_article", views.add_new_article, name="add_article_to_scientific_publication"),
     
     path("account_activation/<code>/", views.activate_user_account, name="account_activation"),
 
