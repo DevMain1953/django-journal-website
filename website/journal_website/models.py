@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 import uuid
 
+
 class String(models.Model):
     russian = models.TextField()
     english = models.TextField(blank=True, null=True)
@@ -30,12 +31,12 @@ class StaticPage(models.Model):
 class ScientificPublication(models.Model):
     full_name = models.ForeignKey(String, related_name='scientific_publication_full_name', on_delete=models.CASCADE)
     short_name = models.ForeignKey(String, related_name='scientific_publication_short_name', on_delete=models.CASCADE)
-    contacts = models.ForeignKey(StaticPage, related_name='scientific_publication_contacts', on_delete=models.DO_NOTHING)
-    main_editor = models.ForeignKey(StaticPage, related_name='scientific_publication_main_editor', on_delete=models.DO_NOTHING)
-    legal_information = models.ForeignKey(StaticPage, related_name='scientific_publication_legal_information', on_delete=models.DO_NOTHING)
-    contract_information = models.ForeignKey(StaticPage, related_name='scientific_publication_contract_information', on_delete=models.DO_NOTHING)
-    science_branches = models.ForeignKey(StaticPage, related_name='scientific_publication_science_branches', on_delete=models.DO_NOTHING)
-    editorial_team = models.ForeignKey(StaticPage, related_name='scientific_publication_editorial_team', on_delete=models.DO_NOTHING)
+    contacts = models.ForeignKey(StaticPage, related_name='scientific_publication_contacts', on_delete=models.SET_NULL, null=True)
+    main_editor = models.ForeignKey(StaticPage, related_name='scientific_publication_main_editor', on_delete=models.SET_NULL, null=True)
+    legal_information = models.ForeignKey(StaticPage, related_name='scientific_publication_legal_information', on_delete=models.SET_NULL, null=True)
+    contract_information = models.ForeignKey(StaticPage, related_name='scientific_publication_contract_information', on_delete=models.SET_NULL, null=True)
+    science_branches = models.ForeignKey(StaticPage, related_name='scientific_publication_science_branches', on_delete=models.SET_NULL, null=True)
+    editorial_team = models.ForeignKey(StaticPage, related_name='scientific_publication_editorial_team', on_delete=models.SET_NULL, null=True)
 
 
     def __str__(self):
@@ -48,7 +49,7 @@ class ScientificPublication(models.Model):
 
 class Volume(models.Model):
     name = models.ForeignKey(String, related_name='volume_name', on_delete=models.CASCADE)
-    scientific_publication = models.ForeignKey(ScientificPublication, related_name='volume_scientific_publication', on_delete=models.DO_NOTHING)
+    scientific_publication = models.ForeignKey(ScientificPublication, related_name='volume_scientific_publication', on_delete=models.CASCADE)
 
 
     def __str__(self):
@@ -61,7 +62,7 @@ class Volume(models.Model):
 
 class ScientificSpecialty(models.Model):
     name = models.ForeignKey(String, related_name='scientific_specialty_name', on_delete=models.CASCADE)
-    science_branches = models.ForeignKey(StaticPage, related_name='scientific_specialty_science_branches', on_delete=models.DO_NOTHING)
+    science_branches = models.ForeignKey(StaticPage, related_name='scientific_specialty_science_branches', on_delete=models.SET_NULL, null=True)
 
 
     def __str__(self):
@@ -74,8 +75,8 @@ class ScientificSpecialty(models.Model):
 
 class Category(models.Model):
     name = models.ForeignKey(String, related_name='category_name', on_delete=models.CASCADE)
-    scientific_specialty = models.ForeignKey(ScientificSpecialty, related_name='category_scientific_specialty', on_delete=models.DO_NOTHING)
-    scientific_publication = models.ForeignKey(ScientificPublication, related_name='category_scientific_publication', on_delete=models.DO_NOTHING)
+    scientific_specialty = models.ForeignKey(ScientificSpecialty, related_name='category_scientific_specialty', on_delete=models.CASCADE)
+    scientific_publication = models.ForeignKey(ScientificPublication, related_name='category_scientific_publication', on_delete=models.CASCADE)
 
 
     def __str__(self):
@@ -88,8 +89,8 @@ class Category(models.Model):
 
 class Founder(models.Model):
     full_name = models.ForeignKey(String, related_name='founder_full_name', on_delete=models.CASCADE)
-    scientific_publication = models.ForeignKey(ScientificPublication, related_name='founder_scientific_publication', on_delete=models.DO_NOTHING)
-    contacts = models.ForeignKey(StaticPage, related_name='founder_contacts', on_delete=models.DO_NOTHING)
+    scientific_publication = models.ForeignKey(ScientificPublication, related_name='founder_scientific_publication', on_delete=models.CASCADE)
+    contacts = models.ForeignKey(StaticPage, related_name='founder_contacts', on_delete=models.SET_NULL, null=True)
 
 
     def __str__(self):
@@ -120,9 +121,9 @@ class Article(models.Model):
     publication_date = models.DateField()
     file_name = models.TextField()
     authors = models.TextField()
-    user = models.ForeignKey(User, related_name='article_custom_user', on_delete=models.DO_NOTHING)
-    volume = models.ForeignKey(Volume, related_name='article_volume', on_delete=models.DO_NOTHING)
-    category = models.ForeignKey(Category, related_name='article_category', on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, related_name='article_custom_user', on_delete=models.SET_NULL, null=True)
+    volume = models.ForeignKey(Volume, related_name='article_volume', on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(Category, related_name='article_category', on_delete=models.SET_NULL, null=True)
 
 
     def __str__(self):
