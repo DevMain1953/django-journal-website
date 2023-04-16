@@ -1,10 +1,11 @@
+from typing import Required
 from django.core.validators import FileExtensionValidator
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from django.forms import ModelForm
-from .models import UserAdditionalData
+from .models import UserAdditionalData, Feedback
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -48,3 +49,16 @@ class ArticleForm(forms.Form):
 			self.fields["categories"].choices=[(category.pk, category.name) for category in categories_in_current_scientific_publication]
 		except:
 			raise Exception("Couldn't intialize choise fields on form")
+
+
+class FeedbackForm(forms.Form):
+	comment = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter your feedback here', 'rows': 10, 'cols': 30}), required=True)
+	decision = forms.ChoiceField(choices=[], required=True)
+
+
+	def __init__(self, decicions, *args, **kwargs):
+		super(FeedbackForm, self).__init__(*args, **kwargs)
+		try:
+			self.fields["decision"].choices=decicions
+		except:
+			raise Exception("Couldn't intialize choise field on form")

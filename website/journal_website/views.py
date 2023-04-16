@@ -3,16 +3,16 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 
-from .forms import UserRegistrationForm, UserAdditionalDataForm, ArticleForm
+from .forms import UserRegistrationForm, UserAdditionalDataForm, ArticleForm, FeedbackForm
 from .services import EmailService
 from .managers import FileManager
-from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository, VolumeRepository, CategoryRepository, UserRepository
+from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository, VolumeRepository, CategoryRepository, UserRepository, FeedbackRepository
 
 email_service = EmailService.EmailService()
 file_manager = FileManager.FileManager()
@@ -22,6 +22,7 @@ article = ArticleRepository.ArticleRepository()
 scientific_publication = ScientificPublicationRepository.ScientificPublicationRepository()
 volume = VolumeRepository.VolumeRepository()
 category = CategoryRepository.CategoryRepository()
+feedback = FeedbackRepository.FeedbackRepository()
 user = UserRepository.UserRepository()
 
 
@@ -110,6 +111,65 @@ def remove_article(request, pk_of_article):
 	file_manager.remove_file_from_server_by_name(article.get_article_by_id(pk_of_article).file_name)
 	article.remove_article_by_id(pk_of_article)
 	return redirect("specific_user_articles_with_pagination", number_of_page=1)
+
+
+@login_required
+@user_passes_test(user.is_user_reviewer)
+def display_page_with_feedbacks_for_specific_user(request, number_of_page):
+	pagination_for_feedbacks = feedback.get_pagination_for_list_of_feedbacks(list_of_feedbacks=feedback.get_all_feedbacks_for_user(request.user), number_of_feedbacks_per_page=5, number_of_page_to_display=number_of_page)
+	return render(request, "feedback/feedbacks_for_specific_user.html", {'pagination_for_feedbacks': pagination_for_feedbacks})
+
+
+@login_required
+@user_passes_test(user.is_user_reviewer)
+def add_feedback(request, pk_of_article):
+	if request.method == 'POST':
+		filled_feedback_creation_form = FeedbackForm(feedback.get_decisions(), request.POST)
+		if filled_feedback_creation_form.is_valid():
+			comment = filled_feedback_creation_form.cleaned_data["comment"]
+			decision = filled_feedback_creation_form.cleaned_data["decision"]
+			current_article = article.get_article_by_id(pk_of_article)
+			feedback.add_new_feedback(comment, current_article, request.user, decision)
+			email_service.send_notification_email_to_user(sender=str(request.user.email), receiver=current_article.user)
+			return redirect("specific_user_feedbacks_with_pagination", number_of_page=1)
+		else:
+			messages.error(request, 'Form is invalid! Read hints')
+	feedback_creation_form = FeedbackForm(feedback.get_decisions())
+	return render(request, 'feedback/adding_new_feedback.html', {'feedback_creation_form': feedback_creation_form})
+
+
+@login_required
+@user_passes_test(user.is_user_reviewer)
+def update_feedback(request, pk_of_feedback):
+	current_feedback = feedback.get_feedback_by_id_and_user(pk_of_feedback, request.user)
+	if current_feedback is None:
+		return HttpResponse("There is no feedback with such id")
+	if request.method == 'POST':
+		filled_feedback_updating_form = FeedbackForm(feedback.get_decisions(), request.POST)
+		if filled_feedback_updating_form.is_valid():
+			comment = filled_feedback_updating_form.cleaned_data["comment"]
+			decision = filled_feedback_updating_form.cleaned_data["decision"]
+			feedback.update_feedback_by_id(id=pk_of_feedback, comment=comment, decision=decision)
+			return redirect("specific_user_feedbacks_with_pagination", number_of_page=1)
+	feedback_updating_form = FeedbackForm(feedback.get_decisions(), initial={"comment": current_feedback.comment, "decision": current_feedback.decision})
+	return render(request, 'feedback/updating_feedback.html', {'feedback_updating_form': feedback_updating_form})
+
+
+@login_required
+@user_passes_test(user.is_user_reviewer)
+def display_remove_feedback_page(request, pk_of_feedback):
+	if feedback.get_feedback_by_id_and_user(pk_of_feedback, request.user) is None:
+		return HttpResponse("There is no feedback with such id")
+	return render(request, 'feedback/removing_feedback.html', {'pk_of_feedback': pk_of_feedback})
+
+
+@login_required
+@user_passes_test(user.is_user_reviewer)
+def remove_feedback(request, pk_of_feedback):
+	if feedback.get_feedback_by_id_and_user(pk_of_feedback, request.user) is None:
+		return HttpResponse("There is no feedback with such id")
+	feedback.remove_feedback_by_id(pk_of_feedback)
+	return redirect("specific_user_feedbacks_with_pagination", number_of_page=1)
 
 
 @login_required

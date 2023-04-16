@@ -7,6 +7,10 @@ from django.http import HttpResponse
 
 
 class EmailService:
+    def __init__(self):
+        pass
+
+    
     def send_email_message(self, sender, receiver, subject, email_template_name, code=None):
         content = {
             "email": receiver.email,
@@ -24,5 +28,20 @@ class EmailService:
         message = render_to_string(email_template_name, content)
         try:
             send_mail(subject, message, sender , [receiver.email], fail_silently=False)
+        except BadHeaderError:
+            return HttpResponse('Invalid header found.')
+        
+
+    def send_notification_email_to_user(self, sender, receiver):
+        content = {
+            "email": receiver.email,
+            'domain': '127.0.0.1:8000',
+			'site_name': 'Website',
+            "user": receiver,
+			'protocol': 'http',
+        }
+        message = render_to_string("feedback/new_feedback_email.txt", content)
+        try:
+            send_mail("There is new feedback to your article", message, sender , [receiver.email], fail_silently=False)
         except BadHeaderError:
             return HttpResponse('Invalid header found.')

@@ -1,6 +1,6 @@
 {% extends 'main/layout.html' %}
 
-{% block title %}<title>Updating article</title>{% endblock %}
+{% block title %}<title>Adding new feedback</title>{% endblock %}
 
 {% block body %}
 
@@ -28,7 +28,7 @@
 
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  {{ article_updating_form|crispy }}
+  {{ feedback_creation_form|crispy }}
 
   {% if messages %}
   <div class="alert alert-danger" role="alert">

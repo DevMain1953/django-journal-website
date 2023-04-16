@@ -6,5 +6,5 @@ class UserRepository:
         self.__user_model = User
     
 
-    def is_user_member_of_group(self, user, group_name):
-        return user.groups.filter(name=group_name).exists()
+    def is_user_reviewer(self, user):
+        return user.groups.filter(name="Reviewers").exists()

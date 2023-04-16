@@ -1,0 +1,14 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}<title>Removing feedback</title>{% endblock %}
+
+{% block body %}
+
+{% load crispy_forms_tags %} 
+
+<body>
+
+  <h2>Are you sure you want to remove this feedback?</h2>
+  <a class="btn btn-danger" href="{% url 'remove_feedback' pk_of_feedback %}">Yes</a>
+</body>
+{% endblock %}

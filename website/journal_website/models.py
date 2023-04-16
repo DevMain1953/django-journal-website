@@ -138,7 +138,9 @@ class Feedback(models.Model):
     comment = models.TextField()
     article = models.ForeignKey(Article, related_name='feedback_article', on_delete=models.CASCADE)
     publication_date = models.DateField()
-    decision = models.CharField(max_length=20, choices=[('accepted', 'Accepted'), ('rejected', 'Rejected')])
+    user = models.ForeignKey(User, related_name='feedback_custom_user', on_delete=models.SET_NULL, null=True)
+    DECISIONS = [('accepted', 'Accepted'), ('rejected', 'Rejected')]
+    decision = models.CharField(max_length=20, choices=DECISIONS)
 
 
     def __str__(self):
