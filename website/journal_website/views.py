@@ -9,15 +9,19 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 
-from .forms import UserRegistrationForm, UserAdditionalDataForm
-from .models import UserAdditionalData, Article, ScientificPublication, Volume, Category
+from .forms import UserRegistrationForm, UserAdditionalDataForm, ArticleForm
 from .services import EmailService
-from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository
+from .managers import FileManager
+from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository, VolumeRepository, CategoryRepository
 
 email_service = EmailService.EmailService()
-user_additional_data = UserAdditionalDataRepository.UserAdditionalDataRepository(UserAdditionalData)
-article = ArticleRepository.ArticleRepository(Article)
-scientific_publication = ScientificPublicationRepository.ScientificPublicationRepository(ScientificPublication)
+file_manager = FileManager.FileManager()
+
+user_additional_data = UserAdditionalDataRepository.UserAdditionalDataRepository()
+article = ArticleRepository.ArticleRepository()
+scientific_publication = ScientificPublicationRepository.ScientificPublicationRepository()
+volume = VolumeRepository.VolumeRepository()
+category = CategoryRepository.CategoryRepository()
 
 
 def display_homepage(request):
@@ -36,8 +40,75 @@ def display_page_with_scientific_publications(request, number_of_page):
 
 
 @login_required
+def display_page_with_articles_for_specific_user(request, number_of_page):
+	pagination_for_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_articles_for_user(request.user), number_of_articles_per_page=5, number_of_page_to_display=number_of_page)
+	return render(request, "article/articles_for_specific_user.html", {'pagination_for_articles': pagination_for_articles})
+
+
+@login_required
 def add_new_article(request, pk_of_scientific_publication):
-	return HttpResponse("Adding new article")
+	current_scientific_publication = scientific_publication.get_scientific_publication_by_id(pk_of_scientific_publication)
+	volumes = volume.get_all_volumes_in_current_scientific_publication(current_scientific_publication)
+	categories = category.get_all_categories_in_current_scientific_publication(current_scientific_publication)
+	if request.method == 'POST':
+		filled_article_creation_form = ArticleForm(volumes, categories, request.POST, request.FILES)
+		if filled_article_creation_form.is_valid():
+			selected_volume_id = filled_article_creation_form.cleaned_data["volumes"]
+			selected_category_id = filled_article_creation_form.cleaned_data["categories"]
+			selected_file_name = request.FILES["file"].name
+
+			unique_file_name = file_manager.save_file_to_server(selected_file_name, request.FILES["file"])
+
+			volume_by_id = volume.get_volume_by_id(selected_volume_id)
+			category_by_id = category.get_category_by_id(selected_category_id)
+			article.add_new_article(file_name=unique_file_name, user=request.user, volume=volume_by_id, category=category_by_id)
+			return redirect("specific_user_articles_with_pagination", number_of_page=1)
+		else:
+			messages.error(request, 'Form is invalid! Read hints')
+	article_creation_form = ArticleForm(volumes, categories)
+	return render(request, 'article/adding_new_article.html', {'article_creation_form': article_creation_form})
+
+
+@login_required
+def update_article(request, pk_of_article):
+	current_article = article.get_article_by_id_and_user(pk_of_article, request.user)
+	if current_article is None:
+		return HttpResponse("There is no article with such id")
+	current_scientific_publication = scientific_publication.get_scientific_publication_by_id(current_article.category.scientific_publication.pk)
+	volumes = volume.get_all_volumes_in_current_scientific_publication(current_scientific_publication)
+	categories = category.get_all_categories_in_current_scientific_publication(current_scientific_publication)
+	if request.method == 'POST':
+		filled_article_updating_form = ArticleForm(volumes, categories, request.POST, request.FILES)
+		if filled_article_updating_form.is_valid():
+			selected_volume_id = filled_article_updating_form.cleaned_data["volumes"]
+			selected_category_id = filled_article_updating_form.cleaned_data["categories"]
+			selected_file_name = request.FILES["file"].name
+
+			unique_file_name = file_manager.save_file_to_server(selected_file_name, request.FILES["file"])
+			file_manager.remove_file_from_server_by_name(current_article.file_name)
+
+			volume_by_id = volume.get_volume_by_id(selected_volume_id)
+			category_by_id = category.get_category_by_id(selected_category_id)
+			article.update_article_by_id(id=pk_of_article, file_name=unique_file_name, volume=volume_by_id, category=category_by_id)
+			return redirect("specific_user_articles_with_pagination", number_of_page=1)
+	article_updating_form = ArticleForm(volumes, categories, initial={"volumes": current_article.volume.pk, "categories": current_article.category.pk})
+	return render(request, 'article/updating_article.html', {'article_updating_form': article_updating_form})
+
+
+@login_required
+def display_remove_article_page(request, pk_of_article):
+	if article.get_article_by_id_and_user(pk_of_article, request.user) is None:
+		return HttpResponse("There is no article with such id")
+	return render(request, 'article/removing_article.html', {'pk_of_article': pk_of_article})
+
+
+@login_required
+def remove_article(request, pk_of_article):
+	if article.get_article_by_id_and_user(pk_of_article, request.user) is None:
+		return HttpResponse("There is no article with such id")
+	file_manager.remove_file_from_server_by_name(article.get_article_by_id(pk_of_article).file_name)
+	article.remove_article_by_id(pk_of_article)
+	return redirect("specific_user_articles_with_pagination", number_of_page=1)
 
 
 @login_required
@@ -55,8 +126,8 @@ def change_user_additional_data(request):
 
 def activate_user_account(request, code):
 	try:
-		user_additional_data = UserAdditionalData.objects.get(code=code)
-		registered_user = User.objects.get(pk=user_additional_data.user.pk)
+		user_additional_data_by_code = user_additional_data.get_object_by_code(code=code)
+		registered_user = User.objects.get(pk=user_additional_data_by_code.user.pk)
 	except(TypeError, ValueError, OverflowError, User.DoesNotExist):
 		registered_user = None
 	if registered_user is not None:
@@ -88,9 +159,9 @@ def register_new_user(request):
 		filled_registration_form = UserRegistrationForm(request.POST)
 		if filled_registration_form.is_valid():
 			new_user = filled_registration_form.save()
-			user_additional_data = UserAdditionalData.objects.create(user=new_user)
+			new_user_additional_data = user_additional_data.add_new(new_user)
 			email_service.send_email_message(sender="admin@example.com", receiver=new_user, subject="Account activation",
-				   email_template_name="user/account_activation/account_activation_email.txt", code=user_additional_data.code)
+				   email_template_name="user/account_activation/account_activation_email.txt", code=new_user_additional_data.code)
 			return HttpResponse('We sent email with instructions to activate your account. <a href="/">Go home</a>')
 		else:
 			messages.error(request, "Unsuccessful registration. Please read all hints under input fields. Hint: maybe username you entered is already in use!")

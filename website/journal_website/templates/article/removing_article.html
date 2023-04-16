@@ -1,0 +1,14 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}<title>Adding new articles</title>{% endblock %}
+
+{% block body %}
+
+{% load crispy_forms_tags %} 
+
+<body>
+
+  <h2>Are you sure you want to remove this article?</h2>
+  <a class="btn btn-danger" href="{% url 'remove_article' pk_of_article %}">Yes</a>
+</body>
+{% endblock %}

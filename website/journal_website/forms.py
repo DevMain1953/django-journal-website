@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -11,9 +12,11 @@ class UserRegistrationForm(UserCreationForm):
 	first_name = forms.CharField(max_length=70, required=True)
 	last_name = forms.CharField(max_length=70, required=True)
 	
+
 	class Meta:
 		model = User
 		fields = ("username", "password1", "password2", "email", "first_name", "last_name")
+
 
 	def save(self, commit=True):
 		new_user = super(UserRegistrationForm, self).save(commit=False)
@@ -30,3 +33,18 @@ class UserAdditionalDataForm(ModelForm):
 	class Meta:
 		model = UserAdditionalData
 		fields = ["middle_name"]
+
+
+class ArticleForm(forms.Form):
+	volumes = forms.ChoiceField(choices=[], required=True)
+	categories = forms.ChoiceField(choices=[], required=True)
+	file = forms.FileField(label='Choose DOCX or DOC file', validators=[FileExtensionValidator(allowed_extensions=["docx", "doc"])], required=True)
+    
+
+	def __init__(self, volumes_in_current_scientific_publication, categories_in_current_scientific_publication, *args, **kwargs):
+		super(ArticleForm, self).__init__(*args, **kwargs)
+		try:
+			self.fields["volumes"].choices=[(volume.pk, volume.name) for volume in volumes_in_current_scientific_publication]
+			self.fields["categories"].choices=[(category.pk, category.name) for category in categories_in_current_scientific_publication]
+		except:
+			raise Exception("Couldn't intialize choise fields on form")

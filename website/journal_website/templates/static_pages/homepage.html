@@ -16,6 +16,7 @@
               <nav class="nav nav-masthead justify-content-center">
                 <a class="nav-link active" href="/">Home</a>
                 {% if user.is_authenticated %}
+                <a class="nav-link" href="{% url 'specific_user_articles_with_pagination' 1 %}">My articles</a>
                 <a class="nav-link" href="/account_settings">Account</a>
                 <a class="nav-link" href="/logout">Logout</a>
                 {% else %}

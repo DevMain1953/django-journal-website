@@ -1,6 +1,6 @@
 {% extends 'main/layout.html' %}
 
-{% block title %}<title>Articles</title>{% endblock %}
+{% block title %}<title>My articles</title>{% endblock %}
 
 {% block body %}
 
@@ -42,7 +42,7 @@
               <a class="page-link" href="#" tabindex="-1">{{ number_of_page }}</a>
             </li>
           {% else %}
-              <li class="page-item"><a class="page-link" href="{% url 'articles_with_pagination' number_of_page %}">{{ number_of_page }}</a></li>
+              <li class="page-item"><a class="page-link" href="{% url 'specific_user_articles_with_pagination' number_of_page %}">{{ number_of_page }}</a></li>
           {% endif %}
         {% endif %}
     {% endfor %}
@@ -60,22 +60,20 @@
         <th>Publication date</th>
         <th>Category</th>
         <th>Volume</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
       {% block article %}
         {% for article in pagination_for_articles %}
           <tr>
-            <td>{{ article.name }}</td>
+            <td><a href="{% url 'update_article' article.pk %}">{{ article.name }}</a></td>
             <td>{{ article.short_description }}</td>
-            {% if article.user is None %}
-              <td>Author deleted</td>
-            {% else %}
-              <td>{{ article.user }}</td>
-            {% endif %}
+            <td>{{ article.user }}</td>
             <td>{{ article.publication_date }}</td>
             <td>{{ article.category.name }}</td>
             <td>{{ article.volume.name }}</td>
+            <td><a href="{% url 'delete_article' article.pk %}">Delete article</a></td>
           </tr>
         {% endfor %}
       {% endblock %}
