@@ -12,7 +12,7 @@ from django.db.models.query_utils import Q
 from .forms import UserRegistrationForm, UserAdditionalDataForm, ArticleForm
 from .services import EmailService
 from .managers import FileManager
-from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository, VolumeRepository, CategoryRepository
+from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository, VolumeRepository, CategoryRepository, UserRepository
 
 email_service = EmailService.EmailService()
 file_manager = FileManager.FileManager()
@@ -22,6 +22,7 @@ article = ArticleRepository.ArticleRepository()
 scientific_publication = ScientificPublicationRepository.ScientificPublicationRepository()
 volume = VolumeRepository.VolumeRepository()
 category = CategoryRepository.CategoryRepository()
+user = UserRepository.UserRepository()
 
 
 def display_homepage(request):
