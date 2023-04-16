@@ -39,7 +39,7 @@ class UserAdditionalDataForm(ModelForm):
 class ArticleForm(forms.Form):
 	volumes = forms.ChoiceField(choices=[], required=True)
 	categories = forms.ChoiceField(choices=[], required=True)
-	file = forms.FileField(label='Choose DOCX or DOC file', validators=[FileExtensionValidator(allowed_extensions=["docx", "doc"])], required=True)
+	file = forms.FileField(label='Choose DOCX file', validators=[FileExtensionValidator(allowed_extensions=["docx"])], required=True)
     
 
 	def __init__(self, volumes_in_current_scientific_publication, categories_in_current_scientific_publication, *args, **kwargs):

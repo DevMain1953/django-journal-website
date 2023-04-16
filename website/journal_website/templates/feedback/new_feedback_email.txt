@@ -1,1 +1,6 @@
+{% autoescape off %}
 New feedback was added to your recently uploaded article.
+
+Follow the link to see all feedbacks:
+{{ protocol }}://{{ domain }}{% url 'article_details' pk_of_article=id_of_article %}
+{% endautoescape %}

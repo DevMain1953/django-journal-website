@@ -12,11 +12,12 @@ from django.db.models.query_utils import Q
 
 from .forms import UserRegistrationForm, UserAdditionalDataForm, ArticleForm, FeedbackForm
 from .services import EmailService
-from .managers import FileManager
+from .managers import FileManager, ArticleManager
 from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository, VolumeRepository, CategoryRepository, UserRepository, FeedbackRepository
 
 email_service = EmailService.EmailService()
 file_manager = FileManager.FileManager()
+article_manager = ArticleManager.ArticleManager()
 
 user_additional_data = UserAdditionalDataRepository.UserAdditionalDataRepository()
 article = ArticleRepository.ArticleRepository()
@@ -49,7 +50,7 @@ def display_page_with_articles_for_specific_user(request, number_of_page):
 
 
 @login_required
-def add_new_article(request, pk_of_scientific_publication):
+def add_article(request, pk_of_scientific_publication):
 	current_scientific_publication = scientific_publication.get_scientific_publication_by_id(pk_of_scientific_publication)
 	volumes = volume.get_all_volumes_in_current_scientific_publication(current_scientific_publication)
 	categories = category.get_all_categories_in_current_scientific_publication(current_scientific_publication)
@@ -61,10 +62,15 @@ def add_new_article(request, pk_of_scientific_publication):
 			selected_file_name = request.FILES["file"].name
 
 			unique_file_name = file_manager.save_file_to_server(selected_file_name, request.FILES["file"])
+			russian_article = article_manager.get_base_information_about_article_in_russian_from_file(unique_file_name)
+			english_article = article_manager.get_base_information_about_article_in_english_from_file(unique_file_name)
 
 			volume_by_id = volume.get_volume_by_id(selected_volume_id)
 			category_by_id = category.get_category_by_id(selected_category_id)
-			article.add_new_article(file_name=unique_file_name, user=request.user, volume=volume_by_id, category=category_by_id)
+			new_article = article.add_new_article(name=russian_article["name"], short_description=russian_article["short_description"], file_name=unique_file_name,
+			   authors=russian_article["authors"], user=request.user, volume=volume_by_id, category=category_by_id)
+			article.add_foreign_language_to_article_by_id(id=new_article.pk, name=english_article["name"], short_description=english_article["short_description"],
+						 authors=english_article["authors"])
 			return redirect("specific_user_articles_with_pagination", number_of_page=1)
 		else:
 			messages.error(request, 'Form is invalid! Read hints')
@@ -89,10 +95,15 @@ def update_article(request, pk_of_article):
 
 			unique_file_name = file_manager.save_file_to_server(selected_file_name, request.FILES["file"])
 			file_manager.remove_file_from_server_by_name(current_article.file_name)
+			russian_article = article_manager.get_base_information_about_article_in_russian_from_file(unique_file_name)
+			english_article = article_manager.get_base_information_about_article_in_english_from_file(unique_file_name)
 
 			volume_by_id = volume.get_volume_by_id(selected_volume_id)
 			category_by_id = category.get_category_by_id(selected_category_id)
-			article.update_article_by_id(id=pk_of_article, file_name=unique_file_name, volume=volume_by_id, category=category_by_id)
+			article.update_article_by_id(id=pk_of_article, name=russian_article["name"], short_description=russian_article["short_description"],
+				file_name=unique_file_name, authors=russian_article["authors"], volume=volume_by_id, category=category_by_id)
+			article.add_foreign_language_to_article_by_id(id=pk_of_article, name=english_article["name"], short_description=english_article["short_description"],
+						 authors=english_article["authors"])
 			return redirect("specific_user_articles_with_pagination", number_of_page=1)
 	article_updating_form = ArticleForm(volumes, categories, initial={"volumes": current_article.volume.pk, "categories": current_article.category.pk})
 	return render(request, 'article/updating_article.html', {'article_updating_form': article_updating_form})
@@ -116,8 +127,9 @@ def remove_article(request, pk_of_article):
 
 def display_article_with_feedbacks(request, pk_of_article):
 	current_article = article.get_article_by_id(pk_of_article)
+	user_middle_name = user_additional_data.get_middle_name_for_user(current_article.user)
 	feedbacks_to_current_article = feedback.get_all_feedbacks_to_article(current_article)
-	return render(request, "article/article_details.html", {"current_article": current_article, "feedbacks_to_current_article": feedbacks_to_current_article})
+	return render(request, "article/article_details.html", {"current_article": current_article, "feedbacks_to_current_article": feedbacks_to_current_article, "user_middle_name": user_middle_name})
 
 
 def download_article(request, pk_of_article):
@@ -143,7 +155,7 @@ def add_feedback(request, pk_of_article):
 			decision = filled_feedback_creation_form.cleaned_data["decision"]
 			current_article = article.get_article_by_id(pk_of_article)
 			feedback.add_new_feedback(comment, current_article, request.user, decision)
-			email_service.send_notification_email_to_user(sender=str(request.user.email), receiver=current_article.user)
+			email_service.send_notification_email_to_user(sender=str(request.user.email), receiver=current_article.user, id_of_article=pk_of_article)
 			return redirect("specific_user_feedbacks_with_pagination", number_of_page=1)
 		else:
 			messages.error(request, 'Form is invalid! Read hints')

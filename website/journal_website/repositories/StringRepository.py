@@ -11,3 +11,15 @@ class StringRepository:
         new_string = self.__string_model(russian=russian, english=english)
         new_string.save()
         return new_string
+    
+
+    def update_string_by_id(self, id, russian, english=""):
+        current_string = self.__string_model.objects.get(pk=id)
+        current_string.russian = russian
+        current_string.english = english
+        current_string.save()
+    
+
+    def remove_string_by_id(self, id):
+        current_string = self.__string_model.objects.get(pk=id)
+        current_string.delete()

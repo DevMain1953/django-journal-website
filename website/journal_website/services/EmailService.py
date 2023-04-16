@@ -32,13 +32,14 @@ class EmailService:
             return HttpResponse('Invalid header found.')
         
 
-    def send_notification_email_to_user(self, sender, receiver):
+    def send_notification_email_to_user(self, sender, receiver, id_of_article):
         content = {
             "email": receiver.email,
             'domain': '127.0.0.1:8000',
 			'site_name': 'Website',
             "user": receiver,
 			'protocol': 'http',
+            "id_of_article": id_of_article
         }
         message = render_to_string("feedback/new_feedback_email.txt", content)
         try:

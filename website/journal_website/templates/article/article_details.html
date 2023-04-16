@@ -26,17 +26,39 @@
     </div>
 </nav>
 
+<div class="container py-5">
 <h1>{{ current_article.name }}</h1>
-<h2>{{ current_article.short_description }}</h2>
+<h4>{{ current_article.short_description }}</h4>
 <br>
-<h2>{{ current_article.volume.name }}</h2>
-<h2>{{ current_article.category.name }}</h2>
+<h4>{{ current_article.volume.name }}</h4>
+<h4>{{ current_article.category.name }}</h4>
 <br>
-<h2>{{ current_article.publication_date }}</h2>
-<h2>{{ current_article.user }}</h2>
-<h2>{{ current_article.authors }}</h2>
+<h4>{{ current_article.publication_date }}</h4>
+<h4>{{ current_article.user.last_name }} {{ current_article.user.first_name }} {{ user_middle_name }}</h4>
+<h4>{{ current_article.authors.russian }}</h4>
 <br>
 <a href="{% url 'article_download' current_article.pk %}">Download article</a>
+<br>
+<br>
 
+{% block feedbacks %}
+{% for feedback in feedbacks_to_current_article %}
+<div class="card">
+  <div class="card-header">
+    Feedback
+  </div>
+  <div class="card-body">
+    <blockquote class="blockquote mb-0">
+      <p>{{ feedback.comment }}</p>
+      <p>Status: {{ feedback.decision }}</p>
+      <footer class="blockquote-footer">{{ feedback.user.last_name }} {{ feedback.user.first_name }}</footer>
+    </blockquote>
+  </div>
+</div>
+<br>
+{% endfor %}
+{% endblock %}
+
+</div>
 </body>
 {% endblock %}

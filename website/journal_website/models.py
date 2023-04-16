@@ -120,7 +120,7 @@ class Article(models.Model):
     short_description = models.ForeignKey(String, related_name='article_short_description', on_delete=models.CASCADE)
     publication_date = models.DateField()
     file_name = models.TextField()
-    authors = models.TextField()
+    authors = models.ForeignKey(String, related_name='article_authors', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='article_custom_user', on_delete=models.SET_NULL, null=True)
     volume = models.ForeignKey(Volume, related_name='article_volume', on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, related_name='article_category', on_delete=models.SET_NULL, null=True)
