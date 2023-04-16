@@ -56,7 +56,7 @@
         <th>Comment</th>
         <th>Publication date</th>
         <th>Decision</th>
-        <th>Action</th>
+        <th>Deleting</th>
       </tr>
     </thead>
     <tbody>
@@ -67,7 +67,7 @@
             <td><a href="{% url 'update_feedback' feedback.pk %}">{{ feedback.comment }}</a></td>
             <td>{{ feedback.publication_date }}</td>
             <td>{{ feedback.decision }}</td>
-            <td><a href="{% url 'delete_feedback' feedback.pk %}">Delete feedback</a></td>
+            <td><a class="text-danger" href="{% url 'delete_feedback' feedback.pk %}">Delete</a></td>
           </tr>
         {% endfor %}
       {% endblock %}

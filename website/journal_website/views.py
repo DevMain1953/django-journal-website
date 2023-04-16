@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -5,7 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, Pas
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 
@@ -111,6 +112,18 @@ def remove_article(request, pk_of_article):
 	file_manager.remove_file_from_server_by_name(article.get_article_by_id(pk_of_article).file_name)
 	article.remove_article_by_id(pk_of_article)
 	return redirect("specific_user_articles_with_pagination", number_of_page=1)
+
+
+def display_article_with_feedbacks(request, pk_of_article):
+	current_article = article.get_article_by_id(pk_of_article)
+	feedbacks_to_current_article = feedback.get_all_feedbacks_to_article(current_article)
+	return render(request, "article/article_details.html", {"current_article": current_article, "feedbacks_to_current_article": feedbacks_to_current_article})
+
+
+def download_article(request, pk_of_article):
+	current_article = article.get_article_by_id(pk_of_article)
+	path_to_file = settings.MEDIA_ROOT + current_article.file_name
+	return FileResponse(open(path_to_file, "rb"))
 
 
 @login_required

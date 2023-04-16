@@ -45,3 +45,7 @@ class FeedbackRepository:
     
     def get_decisions(self):
         return self.__feedback_model.DECISIONS
+    
+
+    def get_all_feedbacks_to_article(self, article):
+        return self.__feedback_model.objects.filter(article=article)

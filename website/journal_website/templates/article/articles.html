@@ -67,7 +67,7 @@
       {% block article %}
         {% for article in pagination_for_articles %}
           <tr>
-            <td>{{ article.name }}</td>
+            <td><a href="{% url 'article_details' article.pk %}">{{ article.name }}</a></td>
             <td>{{ article.short_description }}</td>
             {% if article.user is None %}
               <td>Author deleted</td>

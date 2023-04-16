@@ -13,6 +13,8 @@ urlpatterns = [
     path("article/<int:pk_of_article>/update", views.update_article, name="update_article"),
     path("article/<int:pk_of_article>/delete", views.display_remove_article_page, name="delete_article"),
     path("article/<int:pk_of_article>/remove", views.remove_article, name="remove_article"),
+    path("article/<int:pk_of_article>/details", views.display_article_with_feedbacks, name="article_details"),
+    path("article/<int:pk_of_article>/download", views.download_article, name="article_download"),
 
     path("my_feedbacks/<int:number_of_page>/", views.display_page_with_feedbacks_for_specific_user, name="specific_user_feedbacks_with_pagination"),
     path("article/<int:pk_of_article>/add_feedback", views.add_feedback, name="add_feedback_to_article"),
