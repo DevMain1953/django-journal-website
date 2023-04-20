@@ -32,9 +32,16 @@ def display_homepage(request):
     return render(request, "static_pages/homepage.html")
 
 
+@login_required
+@user_passes_test(user.is_user_reviewer)
 def display_page_with_articles(request, number_of_page):
 	pagination_for_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_articles(), number_of_articles_per_page=5, number_of_page_to_display=number_of_page)
 	return render(request, "article/articles.html", {'pagination_for_articles': pagination_for_articles})
+
+
+def display_page_with_accepted_articles(request, number_of_page):
+	pagination_for_accepted_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_accepted_articles(), number_of_articles_per_page=5, number_of_page_to_display=number_of_page)
+	return render(request, "article/articles.html", {'pagination_for_articles': pagination_for_accepted_articles})
 
 
 @login_required
@@ -68,7 +75,7 @@ def add_article(request, pk_of_scientific_publication):
 			volume_by_id = volume.get_volume_by_id(selected_volume_id)
 			category_by_id = category.get_category_by_id(selected_category_id)
 			new_article = article.add_new_article(name=russian_article["name"], short_description=russian_article["short_description"], file_name=unique_file_name,
-			   authors=russian_article["authors"], user=request.user, volume=volume_by_id, category=category_by_id)
+			   authors=russian_article["authors"], user=request.user, volume=volume_by_id, category=category_by_id, decision="rejected")
 			article.add_foreign_language_to_article_by_id(id=new_article.pk, name=english_article["name"], short_description=english_article["short_description"],
 						 authors=english_article["authors"])
 			return redirect("specific_user_articles_with_pagination", number_of_page=1)

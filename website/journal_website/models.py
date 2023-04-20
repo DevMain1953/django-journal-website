@@ -124,6 +124,8 @@ class Article(models.Model):
     user = models.ForeignKey(User, related_name='article_custom_user', on_delete=models.SET_NULL, null=True)
     volume = models.ForeignKey(Volume, related_name='article_volume', on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, related_name='article_category', on_delete=models.SET_NULL, null=True)
+    DECISIONS = [('accepted', 'Accepted'), ('rejected', 'Rejected')]
+    decision = models.CharField(max_length=20, choices=DECISIONS)
 
 
     def __str__(self):

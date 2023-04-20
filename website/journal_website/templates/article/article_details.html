@@ -36,6 +36,15 @@
 <h4>{{ current_article.publication_date }}</h4>
 <h4>{{ current_article.user.last_name }} {{ current_article.user.first_name }} {{ user_middle_name }}</h4>
 <h4>{{ current_article.authors.russian }}</h4>
+
+{% if current_article.decision == "accepted" %}
+<div class="alert alert-success" role="alert">
+  {% else %}
+<div class="alert alert-danger" role="alert">
+{% endif %}
+  <h4>{{ current_article.decision }}</h4>
+</div>
+
 <br>
 <a href="{% url 'article_download' current_article.pk %}">Download article</a>
 <br>

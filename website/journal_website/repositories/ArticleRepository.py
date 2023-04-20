@@ -15,6 +15,10 @@ class ArticleRepository:
         return self.__article_model.objects.all().order_by("pk")
     
 
+    def get_all_accepted_articles(self):
+        return self.__article_model.objects.filter(decision="accepted")
+
+    
     def get_all_articles_for_user(self, user):
         return self.__article_model.objects.filter(user=user)
     
@@ -24,15 +28,20 @@ class ArticleRepository:
         return paginator.get_page(number_of_page_to_display)
     
 
-    def add_new_article(self, name, short_description, file_name, authors, user, volume, category):
+    def add_new_article(self, name, short_description, file_name, authors, user, volume, category, decision):
         new_article_name = self.__string.add_new_string(name)
         new_short_description = self.__string.add_new_string(short_description)
         new_authors = self.__string.add_new_string(authors)
         new_article = self.__article_model(name=new_article_name, short_description=new_short_description, publication_date=datetime.now(),
-                                         file_name=file_name, authors=new_authors, user=user, volume=volume, category=category)
+                                         file_name=file_name, authors=new_authors, user=user, volume=volume, category=category, decision=decision)
         new_article.save()
         return new_article
     
+
+    def update_decision_for_article_by_id(self, id, decision):
+        current_article = self.get_article_by_id(id)
+        current_article.decision = decision
+        current_article.save()
 
     def get_article_by_id(self, id):
         return self.__article_model.objects.get(pk=id)

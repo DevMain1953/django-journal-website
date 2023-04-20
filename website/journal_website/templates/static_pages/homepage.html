@@ -35,7 +35,15 @@
     <h1 class="cover-heading">Home page.</h1>
     <p class="lead">This is home page.</p>
     <p class="lead">
-        <a href="{% url 'articles_with_pagination' 1 %}" class="btn btn-lg btn-secondary">See articles</a>
+      {% if user.is_authenticated %}
+        {% if user|in_group:"Reviewers" %}
+          <a href="{% url 'articles_with_pagination' 1 %}" class="btn btn-lg btn-secondary">See articles</a>
+        {% else %}
+          <a href="{% url 'accepted_articles_with_pagination' 1 %}" class="btn btn-lg btn-secondary">See articles</a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'accepted_articles_with_pagination' 1 %}" class="btn btn-lg btn-secondary">See articles</a>
+      {% endif %}
     </p>
   </main>
 

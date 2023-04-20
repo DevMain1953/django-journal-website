@@ -56,10 +56,8 @@
       <tr>
         <th>Name</th>
         <th>Short description</th>
-        <th>Uploaded by</th>
         <th>Publication date</th>
-        <th>Category</th>
-        <th>Volume</th>
+        <th>Decision</th>
         <th>Updating</th>
         <th>Deleting</th>
       </tr>
@@ -70,10 +68,8 @@
           <tr>
             <td><a href="{% url 'article_details' article.pk %}">{{ article.name }}</a></td>
             <td>{{ article.short_description }}</td>
-            <td>{{ article.user }}</td>
             <td>{{ article.publication_date }}</td>
-            <td>{{ article.category.name }}</td>
-            <td>{{ article.volume.name }}</td>
+            <td>{{ article.decision }}</td>
             <td><a href="{% url 'update_article' article.pk %}">Update</a></td>
             <td><a class="text-danger" href="{% url 'delete_article' article.pk %}">Delete</a></td>
           </tr>

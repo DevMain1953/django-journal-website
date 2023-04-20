@@ -1,7 +1,7 @@
 {% extends 'main/layout.html' %}
 
 {% block title %}<title>Articles</title>{% endblock %}
-
+{% load custom_filters %}
 {% block body %}
 
 {% load crispy_forms_tags %} 
@@ -42,7 +42,15 @@
               <a class="page-link" href="#" tabindex="-1">{{ number_of_page }}</a>
             </li>
           {% else %}
+            {% if user.is_authenticated %}
+            {% if user|in_group:"Reviewers" %}
               <li class="page-item"><a class="page-link" href="{% url 'articles_with_pagination' number_of_page %}">{{ number_of_page }}</a></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="{% url 'accepted_articles_with_pagination' number_of_page %}">{{ number_of_page }}</a></li>
+            {% endif %}
+            {% else %}
+              <li class="page-item"><a class="page-link" href="{% url 'accepted_articles_with_pagination' number_of_page %}">{{ number_of_page }}</a></li>
+            {% endif %}
           {% endif %}
         {% endif %}
     {% endfor %}
@@ -58,8 +66,6 @@
         <th>Short description</th>
         <th>Uploaded by</th>
         <th>Publication date</th>
-        <th>Category</th>
-        <th>Volume</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -75,8 +81,6 @@
               <td>{{ article.user }}</td>
             {% endif %}
             <td>{{ article.publication_date }}</td>
-            <td>{{ article.category.name }}</td>
-            <td>{{ article.volume.name }}</td>
             <td><a href="{% url 'add_feedback_to_article' article.pk %}">Add feedback</a></td>
           </tr>
         {% endfor %}

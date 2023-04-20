@@ -1,4 +1,6 @@
 from django.core.paginator import Paginator
+
+from . import ArticleRepository
 from ..models import Feedback
 from datetime import datetime
 
@@ -6,6 +8,7 @@ from datetime import datetime
 class FeedbackRepository:
     def __init__(self):
         self.__feedback_model = Feedback
+        self.__article = ArticleRepository.ArticleRepository()
 
 
     def get_feedback_by_id(self, id):
@@ -26,6 +29,7 @@ class FeedbackRepository:
     
 
     def add_new_feedback(self, comment, article, user, decision):
+        self.__article.update_decision_for_article_by_id(id=article.pk, decision=decision)
         new_feedback = self.__feedback_model(comment=comment, article=article, publication_date=datetime.now(), user=user, decision=decision)
         new_feedback.save()
         return new_feedback
@@ -41,6 +45,7 @@ class FeedbackRepository:
         current_feedack.comment = comment
         current_feedack.decision = decision
         current_feedack.save()
+        self.__article.update_decision_for_article_by_id(id=current_feedack.article.pk, decision=decision)
 
     
     def get_decisions(self):

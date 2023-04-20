@@ -6,6 +6,7 @@ urlpatterns = [
     path("account_settings", views.change_user_additional_data, name="account_settings"),
     path("password_change", views.change_user_password, name="password_change"),
     path("articles/<int:number_of_page>", views.display_page_with_articles, name="articles_with_pagination"),
+    path("accepted_articles/<int:number_of_page>", views.display_page_with_accepted_articles, name="accepted_articles_with_pagination"),
     path("scientific_publications/<int:number_of_page>", views.display_page_with_scientific_publications, name="scientific_publications_with_pagination"),
 
     path("my_articles/<int:number_of_page>", views.display_page_with_articles_for_specific_user, name="specific_user_articles_with_pagination"),
