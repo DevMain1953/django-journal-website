@@ -1,6 +1,7 @@
 from django.test import TestCase
+
 from ..repositories import StringRepository
-from ..models import String, ScientificPublication, StaticPage, Volume
+from ..models import ScientificPublication, StaticPage, Volume
 
 
 string_repository = StringRepository.StringRepository()

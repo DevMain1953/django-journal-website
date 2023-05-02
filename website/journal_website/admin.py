@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import String, StaticPage, ScientificPublication, Volume, ScientificSpecialty, Category, Founder, UserAdditionalData, Article, Feedback
 
 admin.site.register(String)

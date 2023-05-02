@@ -1,9 +1,11 @@
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.template.loader import render_to_string
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse
+from uuid import UUID
 
 
 class EmailService:
@@ -11,7 +13,7 @@ class EmailService:
         pass
 
     
-    def send_email_message(self, sender, receiver, subject, email_template_name, code=None):
+    def send_email_message(self, sender: str, receiver: User, subject: str, email_template_name: str, code: UUID = None) -> HttpResponse | None:
         content = {
             "email": receiver.email,
             'domain': '127.0.0.1:8000',
@@ -32,7 +34,7 @@ class EmailService:
             return HttpResponse('Invalid header found.')
         
 
-    def send_notification_email_to_user(self, sender, receiver, id_of_article):
+    def send_notification_email_to_user(self, sender: str, receiver: User, id_of_article: int) -> HttpResponse | None:    
         content = {
             "email": receiver.email,
             'domain': '127.0.0.1:8000',

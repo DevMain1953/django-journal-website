@@ -9,7 +9,7 @@ class String(models.Model):
 
 
     def __str__(self):
-        return self.russian
+        return self.english
 
 
     class Meta:

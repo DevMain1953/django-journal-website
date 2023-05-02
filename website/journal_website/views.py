@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -6,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, Pas
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, FileResponse
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 
@@ -28,36 +29,36 @@ feedback = FeedbackRepository.FeedbackRepository()
 user = UserRepository.UserRepository()
 
 
-def display_homepage(request):
+def display_homepage(request: WSGIRequest) -> HttpResponse:
     return render(request, "static_pages/homepage.html")
 
 
 @login_required
 @user_passes_test(user.is_user_reviewer)
-def display_page_with_articles(request, number_of_page):
+def display_page_with_articles(request: WSGIRequest, number_of_page: int) -> HttpResponse:
 	pagination_for_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_articles(), number_of_articles_per_page=5, number_of_page_to_display=number_of_page)
 	return render(request, "article/articles.html", {'pagination_for_articles': pagination_for_articles})
 
 
-def display_page_with_accepted_articles(request, number_of_page):
+def display_page_with_accepted_articles(request: WSGIRequest, number_of_page: int) -> HttpResponse:
 	pagination_for_accepted_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_accepted_articles(), number_of_articles_per_page=5, number_of_page_to_display=number_of_page)
 	return render(request, "article/articles.html", {'pagination_for_articles': pagination_for_accepted_articles})
 
 
 @login_required
-def display_page_with_scientific_publications(request, number_of_page):
+def display_page_with_scientific_publications(request: WSGIRequest, number_of_page: int) -> HttpResponse:
 	pagination_for_scientific_publications = scientific_publication.get_pagination_for_list_of_scientific_publications(list_of_scientific_publications=scientific_publication.get_all_scientific_publications(), number_of_scientific_publications_per_page=5, number_of_page_to_display=number_of_page)
 	return render(request, "scientific_publication/scientific_publications.html", {'pagination_for_scientific_publications': pagination_for_scientific_publications})
 
 
 @login_required
-def display_page_with_articles_for_specific_user(request, number_of_page):
+def display_page_with_articles_for_specific_user(request: WSGIRequest, number_of_page: int) -> HttpResponse:
 	pagination_for_articles = article.get_pagination_for_list_of_articles(list_of_articles=article.get_all_articles_for_user(request.user), number_of_articles_per_page=5, number_of_page_to_display=number_of_page)
 	return render(request, "article/articles_for_specific_user.html", {'pagination_for_articles': pagination_for_articles})
 
 
 @login_required
-def add_article(request, pk_of_scientific_publication):
+def add_article(request: WSGIRequest, pk_of_scientific_publication: int) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	current_scientific_publication = scientific_publication.get_scientific_publication_by_id(pk_of_scientific_publication)
 	volumes = volume.get_all_volumes_in_current_scientific_publication(current_scientific_publication)
 	categories = category.get_all_categories_in_current_scientific_publication(current_scientific_publication)
@@ -69,8 +70,8 @@ def add_article(request, pk_of_scientific_publication):
 			selected_file_name = request.FILES["file"].name
 
 			unique_file_name = file_manager.save_file_to_server(selected_file_name, request.FILES["file"])
-			russian_article = article_manager.get_base_information_about_article_in_russian_from_file(unique_file_name)
-			english_article = article_manager.get_base_information_about_article_in_english_from_file(unique_file_name)
+			russian_article = article_manager.get_name_description_and_authors_of_article_in_russian_from_file(unique_file_name)
+			english_article = article_manager.get_name_description_and_authors_of_article_in_english_from_file(unique_file_name)
 
 			volume_by_id = volume.get_volume_by_id(selected_volume_id)
 			category_by_id = category.get_category_by_id(selected_category_id)
@@ -86,7 +87,7 @@ def add_article(request, pk_of_scientific_publication):
 
 
 @login_required
-def update_article(request, pk_of_article):
+def update_article(request: WSGIRequest, pk_of_article: int) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	current_article = article.get_article_by_id_and_user(pk_of_article, request.user)
 	if current_article is None:
 		return HttpResponse("There is no article with such id")
@@ -102,8 +103,8 @@ def update_article(request, pk_of_article):
 
 			unique_file_name = file_manager.save_file_to_server(selected_file_name, request.FILES["file"])
 			file_manager.remove_file_from_server_by_name(current_article.file_name)
-			russian_article = article_manager.get_base_information_about_article_in_russian_from_file(unique_file_name)
-			english_article = article_manager.get_base_information_about_article_in_english_from_file(unique_file_name)
+			russian_article = article_manager.get_name_description_and_authors_of_article_in_russian_from_file(unique_file_name)
+			english_article = article_manager.get_name_description_and_authors_of_article_in_english_from_file(unique_file_name)
 
 			volume_by_id = volume.get_volume_by_id(selected_volume_id)
 			category_by_id = category.get_category_by_id(selected_category_id)
@@ -117,14 +118,14 @@ def update_article(request, pk_of_article):
 
 
 @login_required
-def display_remove_article_page(request, pk_of_article):
+def display_remove_article_page(request: WSGIRequest, pk_of_article: int) -> HttpResponse:
 	if article.get_article_by_id_and_user(pk_of_article, request.user) is None:
 		return HttpResponse("There is no article with such id")
 	return render(request, 'article/removing_article.html', {'pk_of_article': pk_of_article})
 
 
 @login_required
-def remove_article(request, pk_of_article):
+def remove_article(request: WSGIRequest, pk_of_article: int) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	if article.get_article_by_id_and_user(pk_of_article, request.user) is None:
 		return HttpResponse("There is no article with such id")
 	file_manager.remove_file_from_server_by_name(article.get_article_by_id(pk_of_article).file_name)
@@ -132,14 +133,14 @@ def remove_article(request, pk_of_article):
 	return redirect("specific_user_articles_with_pagination", number_of_page=1)
 
 
-def display_article_with_feedbacks(request, pk_of_article):
+def display_article_with_feedbacks(request: WSGIRequest, pk_of_article: int) -> HttpResponse:
 	current_article = article.get_article_by_id(pk_of_article)
 	user_middle_name = user_additional_data.get_middle_name_for_user(current_article.user)
 	feedbacks_to_current_article = feedback.get_all_feedbacks_to_article(current_article)
 	return render(request, "article/article_details.html", {"current_article": current_article, "feedbacks_to_current_article": feedbacks_to_current_article, "user_middle_name": user_middle_name})
 
 
-def download_article(request, pk_of_article):
+def download_article(request: WSGIRequest, pk_of_article: int) -> FileResponse:
 	current_article = article.get_article_by_id(pk_of_article)
 	path_to_file = settings.MEDIA_ROOT + current_article.file_name
 	return FileResponse(open(path_to_file, "rb"))
@@ -147,14 +148,14 @@ def download_article(request, pk_of_article):
 
 @login_required
 @user_passes_test(user.is_user_reviewer)
-def display_page_with_feedbacks_for_specific_user(request, number_of_page):
+def display_page_with_feedbacks_for_specific_user(request: WSGIRequest, number_of_page: int) -> HttpResponse:
 	pagination_for_feedbacks = feedback.get_pagination_for_list_of_feedbacks(list_of_feedbacks=feedback.get_all_feedbacks_for_user(request.user), number_of_feedbacks_per_page=5, number_of_page_to_display=number_of_page)
 	return render(request, "feedback/feedbacks_for_specific_user.html", {'pagination_for_feedbacks': pagination_for_feedbacks})
 
 
 @login_required
 @user_passes_test(user.is_user_reviewer)
-def add_feedback(request, pk_of_article):
+def add_feedback(request: WSGIRequest, pk_of_article: int) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	if request.method == 'POST':
 		filled_feedback_creation_form = FeedbackForm(feedback.get_decisions(), request.POST)
 		if filled_feedback_creation_form.is_valid():
@@ -172,7 +173,7 @@ def add_feedback(request, pk_of_article):
 
 @login_required
 @user_passes_test(user.is_user_reviewer)
-def update_feedback(request, pk_of_feedback):
+def update_feedback(request: WSGIRequest, pk_of_feedback: int) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	current_feedback = feedback.get_feedback_by_id_and_user(pk_of_feedback, request.user)
 	if current_feedback is None:
 		return HttpResponse("There is no feedback with such id")
@@ -189,7 +190,7 @@ def update_feedback(request, pk_of_feedback):
 
 @login_required
 @user_passes_test(user.is_user_reviewer)
-def display_remove_feedback_page(request, pk_of_feedback):
+def display_remove_feedback_page(request: WSGIRequest, pk_of_feedback: int) -> HttpResponse:
 	if feedback.get_feedback_by_id_and_user(pk_of_feedback, request.user) is None:
 		return HttpResponse("There is no feedback with such id")
 	return render(request, 'feedback/removing_feedback.html', {'pk_of_feedback': pk_of_feedback})
@@ -197,7 +198,7 @@ def display_remove_feedback_page(request, pk_of_feedback):
 
 @login_required
 @user_passes_test(user.is_user_reviewer)
-def remove_feedback(request, pk_of_feedback):
+def remove_feedback(request: WSGIRequest, pk_of_feedback: int) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	if feedback.get_feedback_by_id_and_user(pk_of_feedback, request.user) is None:
 		return HttpResponse("There is no feedback with such id")
 	feedback.remove_feedback_by_id(pk_of_feedback)
@@ -205,7 +206,7 @@ def remove_feedback(request, pk_of_feedback):
 
 
 @login_required
-def change_user_additional_data(request):
+def change_user_additional_data(request: WSGIRequest) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	if request.method == 'POST':
 		filled_user_additional_data_form = UserAdditionalDataForm(request.POST)
 		if filled_user_additional_data_form.is_valid():
@@ -217,7 +218,7 @@ def change_user_additional_data(request):
 	return render(request, 'user/account_settings.html', {'user_additional_data_form': user_additional_data_form})
 
 
-def activate_user_account(request, code):
+def activate_user_account(request: WSGIRequest, code: str) -> HttpResponse:
 	try:
 		user_additional_data_by_code = user_additional_data.get_object_by_code(code=code)
 		registered_user = User.objects.get(pk=user_additional_data_by_code.user.pk)
@@ -232,7 +233,7 @@ def activate_user_account(request, code):
 
 
 @login_required
-def change_user_password(request):
+def change_user_password(request: WSGIRequest) -> HttpResponse:
 	if request.method == 'POST':
 		filled_password_change_form = PasswordChangeForm(request.user, request.POST)
 		if filled_password_change_form.is_valid():
@@ -245,7 +246,7 @@ def change_user_password(request):
 	return render(request, 'user/change_password.html', {'password_change_form': password_change_form})
 
 
-def register_new_user(request):
+def register_new_user(request: WSGIRequest) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	if request.user.is_authenticated:
 		return redirect("homepage")
 	if request.method == "POST":
@@ -262,7 +263,7 @@ def register_new_user(request):
 	return render(request=request, template_name="authentication/registration.html", context={"registration_form": registration_form})
 
 
-def authorize_user(request):
+def authorize_user(request: WSGIRequest) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	if request.user.is_authenticated:
 		return redirect("homepage")
 	if request.method == "POST":
@@ -283,12 +284,12 @@ def authorize_user(request):
 
 
 @login_required
-def logout_user(request):
+def logout_user(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
 	logout(request)
 	return redirect("homepage")
 
 
-def reset_password(request):
+def reset_password(request: WSGIRequest) -> HttpResponse | HttpResponseRedirect | HttpResponsePermanentRedirect:
 	if request.user.is_authenticated:
 		return redirect("homepage")
 	if request.method == "POST":

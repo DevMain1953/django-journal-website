@@ -1,11 +1,11 @@
-from typing import Required
 from django.core.validators import FileExtensionValidator
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-
 from django.forms import ModelForm
-from .models import UserAdditionalData, Feedback
+from django.db.models.query import QuerySet
+
+from .models import UserAdditionalData
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -19,7 +19,7 @@ class UserRegistrationForm(UserCreationForm):
 		fields = ("username", "password1", "password2", "email", "first_name", "last_name")
 
 
-	def save(self, commit=True):
+	def save(self, commit: bool = True) -> User:
 		new_user = super(UserRegistrationForm, self).save(commit=False)
 		new_user.email = self.cleaned_data['email']
 		new_user.first_name = self.cleaned_data['first_name']
@@ -42,7 +42,7 @@ class ArticleForm(forms.Form):
 	file = forms.FileField(label='Choose DOCX file', validators=[FileExtensionValidator(allowed_extensions=["docx"])], required=True)
     
 
-	def __init__(self, volumes_in_current_scientific_publication, categories_in_current_scientific_publication, *args, **kwargs):
+	def __init__(self, volumes_in_current_scientific_publication: QuerySet, categories_in_current_scientific_publication: QuerySet, *args, **kwargs):
 		super(ArticleForm, self).__init__(*args, **kwargs)
 		try:
 			self.fields["volumes"].choices=[(volume.pk, volume.name) for volume in volumes_in_current_scientific_publication]
@@ -56,7 +56,7 @@ class FeedbackForm(forms.Form):
 	decision = forms.ChoiceField(choices=[], required=True)
 
 
-	def __init__(self, decicions, *args, **kwargs):
+	def __init__(self, decicions: list, *args, **kwargs):	
 		super(FeedbackForm, self).__init__(*args, **kwargs)
 		try:
 			self.fields["decision"].choices=decicions

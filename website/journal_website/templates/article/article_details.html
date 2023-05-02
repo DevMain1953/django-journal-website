@@ -35,7 +35,7 @@
 <br>
 <h4>{{ current_article.publication_date }}</h4>
 <h4>{{ current_article.user.last_name }} {{ current_article.user.first_name }} {{ user_middle_name }}</h4>
-<h4>{{ current_article.authors.russian }}</h4>
+<h4>{{ current_article.authors }}</h4>
 
 {% if current_article.decision == "accepted" %}
 <div class="alert alert-success" role="alert">

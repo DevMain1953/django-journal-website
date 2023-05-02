@@ -23,7 +23,7 @@ urlpatterns = [
     path("feedback/<int:pk_of_feedback>/delete", views.display_remove_feedback_page, name="delete_feedback"),
     path("feedback/<int:pk_of_feedback>/remove", views.remove_feedback, name="remove_feedback"),
     
-    path("account_activation/<code>/", views.activate_user_account, name="account_activation"),
+    path("account_activation/<str:code>/", views.activate_user_account, name="account_activation"),
 
     path("registration", views.register_new_user, name="registration"),
     path("authorization", views.authorize_user, name="authorization"),
