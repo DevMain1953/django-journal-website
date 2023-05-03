@@ -135,6 +135,8 @@ def remove_article(request: WSGIRequest, pk_of_article: int) -> HttpResponse | H
 
 def display_article_with_feedbacks(request: WSGIRequest, pk_of_article: int) -> HttpResponse:
 	current_article = article.get_article_by_id(pk_of_article)
+	if current_article.decision != "accepted" and request.user.is_authenticated == False:
+		return HttpResponse("There is no article with such id")
 	user_middle_name = user_additional_data.get_middle_name_for_user(current_article.user)
 	feedbacks_to_current_article = feedback.get_all_feedbacks_to_article(current_article)
 	return render(request, "article/article_details.html", {"current_article": current_article, "feedbacks_to_current_article": feedbacks_to_current_article, "user_middle_name": user_middle_name})

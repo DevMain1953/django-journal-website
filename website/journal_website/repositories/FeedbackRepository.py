@@ -31,9 +31,9 @@ class FeedbackRepository:
     
 
     def add_new_feedback(self, comment: str, article: Article, user: SimpleLazyObject, decision: str) -> Feedback:    
-        self.__article.update_decision_for_article_by_id(id=article.pk, decision=decision)
         new_feedback = self.__feedback_model(comment=comment, article=article, publication_date=datetime.now(), user=user, decision=decision)
         new_feedback.save()
+        self.update_decision_for_article_based_on_ratio_of_accepted_and_rejected_feedback_decisions(article)
         return new_feedback
     
 
@@ -42,12 +42,12 @@ class FeedbackRepository:
         current_feedback.delete()
 
     
-    def update_feedback_by_id(self, id: int, comment: str, decision: str):    
+    def update_feedback_by_id(self, id: int, comment: str, decision: str):
         current_feedack = self.__feedback_model.objects.get(pk=id)
         current_feedack.comment = comment
         current_feedack.decision = decision
         current_feedack.save()
-        self.__article.update_decision_for_article_by_id(id=current_feedack.article.pk, decision=decision)
+        self.update_decision_for_article_based_on_ratio_of_accepted_and_rejected_feedback_decisions(current_feedack.article)
 
     
     def get_decisions(self) -> list:
@@ -56,3 +56,18 @@ class FeedbackRepository:
 
     def get_all_feedbacks_to_article(self, article: Article) -> QuerySet:
         return self.__feedback_model.objects.filter(article=article)
+    
+
+    def __get_number_of_feedbacks_to_article_with_specified_decision(self, article: Article, decision: str) -> int:
+        return self.__feedback_model.objects.filter(article=article, decision=decision).count()
+    
+
+    def update_decision_for_article_based_on_ratio_of_accepted_and_rejected_feedback_decisions(self, article: Article):
+        number_of_feedbacks_with_rejected_decision = self.__get_number_of_feedbacks_to_article_with_specified_decision(article, "rejected")
+        number_of_feedbacks_with_accepted_decision = self.__get_number_of_feedbacks_to_article_with_specified_decision(article, "accepted")
+        if number_of_feedbacks_with_accepted_decision > number_of_feedbacks_with_rejected_decision:
+            self.__article.update_decision_for_article_by_id(id=article.pk, decision="accepted")
+        if number_of_feedbacks_with_accepted_decision < number_of_feedbacks_with_rejected_decision:
+            self.__article.update_decision_for_article_by_id(id=article.pk, decision="rejected")
+        if number_of_feedbacks_with_accepted_decision == number_of_feedbacks_with_rejected_decision:
+            self.__article.update_decision_for_article_by_id(id=article.pk, decision="awaiting_decision")
