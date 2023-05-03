@@ -1,5 +1,6 @@
 from django.conf import settings
 from docx import Document
+from typing import Dict
 
 
 class ArticleManager:
@@ -7,7 +8,7 @@ class ArticleManager:
         self.__docx_document_parser = Document
     
 
-    def get_name_description_and_authors_of_article_in_russian_from_file(self, file_name: str) -> dict:
+    def get_name_description_and_authors_of_article_in_russian_from_file(self, file_name: str) -> Dict[str, str]:
         base_information = {}
         number_of_paragraph = 0
         path_to_file = settings.MEDIA_ROOT + file_name
@@ -28,7 +29,7 @@ class ArticleManager:
         return base_information
     
 
-    def get_name_description_and_authors_of_article_in_english_from_file(self, file_name: str) -> dict:
+    def get_name_description_and_authors_of_article_in_english_from_file(self, file_name: str) -> Dict[str, str]:
         base_information = {}
         number_of_paragraph = 0
         path_to_file = settings.MEDIA_ROOT + file_name

@@ -39,7 +39,9 @@ class FeedbackRepository:
 
     def remove_feedback_by_id(self, id: int):
         current_feedback = self.__feedback_model.objects.get(pk=id)
+        related_article = current_feedback.article
         current_feedback.delete()
+        self.update_decision_for_article_based_on_ratio_of_accepted_and_rejected_feedback_decisions(related_article)
 
     
     def update_feedback_by_id(self, id: int, comment: str, decision: str):

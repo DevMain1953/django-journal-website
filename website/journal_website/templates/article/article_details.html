@@ -46,7 +46,7 @@
 {% if current_article.decision == "awaiting_decision" %}
 <div class="alert alert-warning" role="alert">
 {% endif %}
-  <h4>{{ current_article.decision }}</h4>
+  <h4>{{ current_article.get_decision_display }}</h4>
 </div>
 
 <br>
