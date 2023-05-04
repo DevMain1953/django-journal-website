@@ -69,7 +69,7 @@
             <td><a href="{% url 'article_details' article.pk %}">{{ article.name }}</a></td>
             <td>{{ article.short_description }}</td>
             <td>{{ article.publication_date }}</td>
-            <td>{{ article.decision }}</td>
+            <td>{{ article.get_decision_display }}</td>
             <td><a href="{% url 'update_article' article.pk %}">Update</a></td>
             <td><a class="text-danger" href="{% url 'delete_article' article.pk %}">Delete</a></td>
           </tr>
