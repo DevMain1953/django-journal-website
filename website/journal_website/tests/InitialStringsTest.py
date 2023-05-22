@@ -15,7 +15,6 @@ class InitialStringsTest(TestCase):
         string_repository.add_new_string("Раздел 1", "Volume 1")
         string_repository.add_new_string("Категория 1", "Category 1")
     
-
     def test_newly_created_strings(self):
         name_of_scientific_publication = String.objects.get(pk=1)
         name_of_scientific_specialty = String.objects.get(pk=2)

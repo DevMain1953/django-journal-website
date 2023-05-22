@@ -13,17 +13,15 @@ class UserRegistrationForm(UserCreationForm):
 	first_name = forms.CharField(max_length=70, required=True)
 	last_name = forms.CharField(max_length=70, required=True)
 	
-
 	class Meta:
 		model = User
 		fields = ("username", "password1", "password2", "email", "first_name", "last_name")
 
-
 	def save(self, commit: bool = True) -> User:
 		new_user = super(UserRegistrationForm, self).save(commit=False)
-		new_user.email = self.cleaned_data['email']
-		new_user.first_name = self.cleaned_data['first_name']
-		new_user.last_name = self.cleaned_data['last_name']
+		new_user.email = self.cleaned_data["email"]
+		new_user.first_name = self.cleaned_data["first_name"]
+		new_user.last_name = self.cleaned_data["last_name"]
 		new_user.is_active = False
 		if commit:
 			new_user.save()
@@ -39,9 +37,8 @@ class UserAdditionalDataForm(ModelForm):
 class ArticleForm(forms.Form):
 	volumes = forms.ChoiceField(choices=[], required=True)
 	categories = forms.ChoiceField(choices=[], required=True)
-	file = forms.FileField(label='Choose DOCX file', validators=[FileExtensionValidator(allowed_extensions=["docx"])], required=True)
+	file = forms.FileField(label="Choose DOCX file", validators=[FileExtensionValidator(allowed_extensions=["docx"])], required=True)
     
-
 	def __init__(self, volumes_in_current_scientific_publication: QuerySet, categories_in_current_scientific_publication: QuerySet, *args, **kwargs):
 		super(ArticleForm, self).__init__(*args, **kwargs)
 		try:
@@ -52,9 +49,8 @@ class ArticleForm(forms.Form):
 
 
 class FeedbackForm(forms.Form):
-	comment = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter your feedback here', 'rows': 10, 'cols': 30}), required=True)
+	comment = forms.CharField(widget=forms.Textarea(attrs={"placeholder": "Enter your feedback here", "rows": 10, "cols": 30}), required=True)
 	decision = forms.ChoiceField(choices=[], required=True)
-
 
 	def __init__(self, decicions: list, *args, **kwargs):	
 		super(FeedbackForm, self).__init__(*args, **kwargs)
