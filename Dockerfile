@@ -1,8 +1,9 @@
+# Download image of Ubuntu 20.04
 FROM ubuntu:20.04
 
 # Update and install necessary packages
 # https://tecadmin.net/how-to-install-python-3-11-on-ubuntu-22-04/
-RUN sudo apt-get update \
+RUN apt-get update \
 # Install necessary packages to allow compilation of source code
     && apt-get install -y --no-install-recommends \
     build-essential \
