@@ -44,14 +44,11 @@ RUN poetry config virtualenvs.create false
 COPY . .
 RUN poetry install --no-root --no-dev
 
-# Recreate database and superuser
+# Recreate database
 WORKDIR /website
-ENV DJANGO_SUPERUSER_PASSWORD=FoxyThePirate1953
-ENV DJANGO_INTERACTIVE=true
 RUN python3.11 manage.py flush \
     && python3.11 manage.py makemigrations journal_website \
-    && python3.11 manage.py migrate \
-    && python3.11 manage.py createsuperuser --noinput --username admin --email admin@gmail.com --password=$DJANGO_SUPERUSER_PASSWORD --interactive=$DJANGO_INTERACTIVE
+    && python3.11 manage.py migrate
 
 # Run Django server
 EXPOSE 8080
