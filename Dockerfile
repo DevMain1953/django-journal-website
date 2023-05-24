@@ -32,19 +32,27 @@ RUN apt-get update \
 RUN apt-get install -y curl
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
 
+# Install requests
+RUN python3.11 -m pip install --upgrade requests
+
 # Install poetry
 ENV POETRY_VERSION 1.4.2
 RUN python3.11 -m pip install "poetry==$POETRY_VERSION"
+RUN poetry config virtualenvs.create false
 
 # Install dependencies
 COPY . .
-RUN poetry install
+RUN poetry install --no-root --no-dev
 
-# Run poetry env
-ENTRYPOINT ["poetry", "shell"]
-
-# Go to website folder
+# Recreate database and superuser
 WORKDIR /website
+ENV DJANGO_SUPERUSER_PASSWORD=FoxyThePirate1953
+ENV DJANGO_INTERACTIVE=true
+RUN python3.11 manage.py flush \
+    && python3.11 manage.py makemigrations journal_website \
+    && python3.11 manage.py migrate \
+    && python3.11 manage.py createsuperuser --noinput --username admin --email admin@gmail.com --password=$DJANGO_SUPERUSER_PASSWORD --interactive=$DJANGO_INTERACTIVE
 
 # Run Django server
-CMD ["python3.11", "manage.py", "runserver"]
+EXPOSE 8080
+ENTRYPOINT ["python3.11", "manage.py", "runserver"]
