@@ -42,13 +42,16 @@ RUN poetry config virtualenvs.create false
 
 # Install dependencies
 COPY . .
-RUN poetry install --no-root --no-dev
+RUN poetry install --no-root
 
 # Recreate database
 WORKDIR /website
-RUN python3.11 manage.py flush \
+RUN python3.11 manage.py flush --no-input \
     && python3.11 manage.py makemigrations journal_website \
     && python3.11 manage.py migrate
+
+# Create temporary superuser
+RUN python3.11 manage.py initialize_admin
 
 # Run Django server
 EXPOSE 8080
