@@ -6,7 +6,6 @@ ENV TZ=Europe \
     DEBIAN_FRONTEND=noninteractive
 
 # Update and install necessary packages
-# https://tecadmin.net/how-to-install-python-3-11-on-ubuntu-22-04/
 RUN apt-get update \
 # Install necessary packages to allow compilation of source code
     && apt-get install -y --no-install-recommends \
