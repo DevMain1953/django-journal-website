@@ -54,5 +54,5 @@ RUN python3.11 manage.py flush --no-input \
 RUN python3.11 manage.py initialize_admin
 
 # Run Django server
-EXPOSE 8080
-ENTRYPOINT ["python3.11", "manage.py", "runserver"]
+EXPOSE 8000
+ENTRYPOINT ["python3.11", "manage.py", "runserver", "0.0.0.0:8000"]
