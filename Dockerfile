@@ -29,14 +29,15 @@ RUN apt-get update \
     python3.11
 
 # Install pip for Python 3.11
+RUN apt-get install -y curl
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
-RUN python3.11 get-pip.py
 
 # Install poetry
 ENV POETRY_VERSION 1.4.2
-RUN python3.11 -m pip3.11 install "poetry==$POETRY_VERSION"
+RUN python3.11 -m pip install "poetry==$POETRY_VERSION"
 
 # Install dependencies
+COPY . .
 RUN poetry install
 
 # Run poetry env
