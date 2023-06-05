@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    volumes:
+      - media_volume:/website/journal_website/media
+      - static_volume:/website/journal_website/static
+      - db_volume:/website/db.sqlite3
+    ports:
+      - "8000:8000"
