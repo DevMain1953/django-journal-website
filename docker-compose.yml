@@ -6,7 +6,7 @@ services:
     volumes:
       - media_volume:/website/journal_website/media
       - static_volume:/website/journal_website/static
-      - database_volume:/website/db.sqlite3
+      - database_volume:/website/journal_website/database
     ports:
       - "8000:8000"
 
