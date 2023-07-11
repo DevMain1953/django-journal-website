@@ -12,11 +12,10 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 
 from .forms import UserRegistrationForm, UserAdditionalDataForm, ArticleForm, FeedbackForm
-from .services import EmailService
 from .managers import FileManager, ArticleManager
 from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository, VolumeRepository, CategoryRepository, UserRepository, FeedbackRepository
+from .tasks import send_email_message_to_user_with_activation_link, send_email_message_to_user_with_password_reset_link, send_notification_email_to_user
 
-email_service = EmailService.EmailService()
 file_manager = FileManager.FileManager()
 article_manager = ArticleManager.ArticleManager()
 
@@ -180,8 +179,7 @@ def add_feedback(request: WSGIRequest, pk_of_article: int) -> HttpResponse | Htt
 			current_article = article.get_article_by_id(pk_of_article)
 
 			feedback.add_new_feedback(comment, current_article, request.user, decision)
-			email_service.send_notification_email_to_user(sender=str(request.user.email), receiver=current_article.user, id_of_article=pk_of_article)
-
+			send_notification_email_to_user.apply_async((current_article.user.pk, request.user.pk, pk_of_article), countdown=10)
 			return redirect("specific_user_feedbacks_with_pagination", number_of_page=1)
 		else:
 			messages.error(request, "Form is invalid! Read hints")
@@ -280,8 +278,7 @@ def register_new_user(request: WSGIRequest) -> HttpResponse | HttpResponseRedire
 			new_user = filled_registration_form.save()
 			new_user_additional_data = user_additional_data.add_new(new_user)
 
-			email_service.send_email_message(sender="admin@example.com", receiver=new_user, subject="Account activation",
-				   email_template_name="user/account_activation/account_activation_email.txt", code=new_user_additional_data.code)
+			send_email_message_to_user_with_activation_link.delay(new_user.pk, new_user_additional_data.code)
 			return HttpResponse("We sent email with instructions to activate your account. <a href='/'>Go home</a>")
 		else:
 			messages.error(request, "Unsuccessful registration. Please read all hints under input fields. Hint: maybe username you entered is already in use!")
@@ -331,8 +328,7 @@ def reset_password(request: WSGIRequest) -> HttpResponse | HttpResponseRedirect 
 			
 			if associated_users.exists():
 				for user in associated_users:
-					email_service.send_email_message(sender="admin@example.com", receiver=user, subject="Password Reset Requested",
-				     email_template_name="authentication/password/password_reset_email.txt")
+					send_email_message_to_user_with_password_reset_link.delay(user.pk)
 					return redirect ("/password_reset/done/")
 		messages.error(request, "An invalid email has been entered.")
 	password_reset_form = PasswordResetForm()
