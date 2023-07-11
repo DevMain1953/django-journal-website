@@ -1,3 +1,4 @@
+#TODO reduce number of lines of code (move the form processing functionality to a separate file)
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render, redirect
