@@ -1,6 +1,7 @@
-version: "3"
+version: "3.0"
 
 services:
+  # WEB
   django:
     build: .
     volumes:
@@ -9,6 +10,21 @@ services:
       - database_volume:/website/journal_website/database
     ports:
       - "8000:8000"
+    depends_on:
+      - rabbit
+  
+  # RabbitMQ
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:3.12-rc-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+      
 
 volumes:
   media_volume:

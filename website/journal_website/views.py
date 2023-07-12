@@ -180,7 +180,7 @@ def add_feedback(request: WSGIRequest, pk_of_article: int) -> HttpResponse | Htt
 			current_article = article.get_article_by_id(pk_of_article)
 
 			feedback.add_new_feedback(comment, current_article, request.user, decision)
-			send_notification_email_to_user.apply_async((current_article.user.pk, request.user.pk, pk_of_article), countdown=10)
+			send_notification_email_to_user.delay(current_article.user.pk, request.user.pk, pk_of_article)
 			return redirect("specific_user_feedbacks_with_pagination", number_of_page=1)
 		else:
 			messages.error(request, "Form is invalid! Read hints")

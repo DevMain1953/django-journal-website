@@ -1,5 +1,5 @@
-# Download image of Ubuntu 20.04
-FROM ubuntu:20.04
+# Download image of Ubuntu 22.04
+FROM ubuntu:22.04
 
 # To prevent interactive dialogs
 ENV TZ=Europe \
@@ -54,4 +54,4 @@ RUN python3.11 manage.py initialize_admin
 
 # Run Django server
 EXPOSE 8000
-ENTRYPOINT ["python3.11", "manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["/entrypoint.sh"]
