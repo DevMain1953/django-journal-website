@@ -1,5 +1,5 @@
-# Download image of Ubuntu 22.04
-FROM ubuntu:22.04
+# Download image of Ubuntu 20.04
+FROM ubuntu:20.04
 
 # To prevent interactive dialogs
 ENV TZ=Europe \
