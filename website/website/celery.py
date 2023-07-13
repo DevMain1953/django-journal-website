@@ -8,3 +8,4 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "website.settings")
 celery_application = Celery("website")
 celery_application.config_from_object("django.conf:settings", namespace="CELERY")
 celery_application.autodiscover_tasks()
+celery_application.conf.broker_url = "amqp://simple_user:simple_password@localhost"
