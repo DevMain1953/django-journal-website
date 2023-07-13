@@ -16,12 +16,15 @@ services:
   # RabbitMQ
   rabbit:
     hostname: rabbit
+    container_name: rabbitmq
     image: rabbitmq:3.12-rc-management
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
     ports:
+      # AMQP protocol port
       - "5672:5672"
+      # HTTP management UI
       - "15672:15672"
     restart: always
       
