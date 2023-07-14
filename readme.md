@@ -3,7 +3,7 @@
 Scientific journal website, entities in database are made simpler to reduce development complexity.
 
 TODOs:
-- reduce number of lines of code in ```views.py``` (move the form processing functionality to specific class).
+- reduce number of lines of code in ```views.py``` (move the request handling functionality to specific class).
 
 ## How to install and run
 
