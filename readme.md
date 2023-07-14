@@ -9,3 +9,7 @@ Scientific journal website, entities in database are made simpler to reduce deve
 ```
 docker compose up
 ```
+
+## Code refactoring
+
+TODOs: reduce number of lines of code in ```views.py``` (move the form processing functionality to specific class).
