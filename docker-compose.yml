@@ -28,9 +28,6 @@ services:
     hostname: rabbit
     container_name: rabbitmq
     image: rabbitmq:3.12-rc-management
-    environment:
-      - RABBITMQ_DEFAULT_USER=simple_user
-      - RABBITMQ_DEFAULT_PASS=simple_password
     ports:
       # AMQP protocol port
       - "5672:5672"
