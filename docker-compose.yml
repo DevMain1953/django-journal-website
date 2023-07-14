@@ -4,12 +4,22 @@ services:
   # WEB
   django:
     build: .
+    command: python3.11 manage.py runserver 0.0.0.0:8000
+    container_name: django-server
     volumes:
       - media_volume:/website/journal_website/media
       - static_volume:/website/journal_website/static
       - database_volume:/website/journal_website/database
     ports:
       - "8000:8000"
+    depends_on:
+      - rabbit
+
+  # Celery
+  celery:
+    build: .
+    command: celery -A website worker -l info
+    container_name: celery
     depends_on:
       - rabbit
   

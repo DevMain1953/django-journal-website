@@ -52,6 +52,4 @@ RUN python3.11 manage.py flush --no-input \
 # Create temporary superuser
 RUN python3.11 manage.py initialize_admin
 
-# Run Django server
 EXPOSE 8000
-ENTRYPOINT ["/entrypoint.sh"]
