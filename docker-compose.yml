@@ -1,6 +1,25 @@
 version: "3.0"
 
 services:
+  # RabbitMQ
+  rabbit:
+    hostname: rabbit
+    container_name: rabbitmq
+    image: rabbitmq:3.12-rc-management
+    ports:
+      # AMQP protocol port
+      - "5672:5672"
+      # HTTP management UI
+      - "15672:15672"
+
+  # Celery
+  celery:
+    build: .
+    command: celery -A website worker -l info
+    container_name: celery
+    depends_on:
+      - rabbit
+
   # WEB
   django:
     build: .
@@ -13,28 +32,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - rabbit
-
-  # Celery
-  celery:
-    build: .
-    command: celery -A website worker -l info
-    container_name: celery
-    depends_on:
-      - rabbit
-  
-  # RabbitMQ
-  rabbit:
-    hostname: rabbit
-    container_name: rabbitmq
-    image: rabbitmq:3.12-rc-management
-    ports:
-      # AMQP protocol port
-      - "5672:5672"
-      # HTTP management UI
-      - "15672:15672"
-    restart: always
-      
+      - celery
 
 volumes:
   media_volume:
