@@ -2,39 +2,56 @@ version: "3.0"
 
 services:
   # RabbitMQ
-  rabbit:
-    hostname: rabbit
+  rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.12-rc-management
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=vhost
+      - RABBITMQ_DEFAULT_USER=simple_user
+      - RABBITMQ_DEFAULT_PASS=simple_password
     ports:
       # AMQP protocol port
       - "5672:5672"
       # HTTP management UI
       - "15672:15672"
-
-  # Celery
-  celery:
-    build: .
-    command: celery -A website worker -l info
-    container_name: celery
-    depends_on:
-      - rabbit
+    hostname: rabbitmq
+    networks:
+      - main
 
   # WEB
   django:
     build: .
     command: python3.11 manage.py runserver 0.0.0.0:8000
-    container_name: django-server
+    container_name: django
     volumes:
       - media_volume:/website/journal_website/media
       - static_volume:/website/journal_website/static
       - database_volume:/website/journal_website/database
     ports:
       - "8000:8000"
+    image: django-image
+    hostname: django
+    networks:
+      - main
     depends_on:
-      - celery
+      - rabbitmq
+
+  # Celery worker
+  celery_worker:
+    command: celery -A website worker -l info
+    container_name: celery_worker
+    image: django-image
+    hostname: celery_worker
+    networks:
+      - main
+    depends_on:
+      - rabbitmq
+      - django
 
 volumes:
   media_volume:
   static_volume:
   database_volume:
+
+networks:
+  main:
