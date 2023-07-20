@@ -15,8 +15,6 @@ services:
       # HTTP management UI
       - "15672:15672"
     hostname: rabbitmq
-    networks:
-      - main
 
   # WEB
   django:
@@ -30,8 +28,6 @@ services:
     ports:
       - "8000:8000"
     image: django-image
-    networks:
-      - main
     network_mode: "host"
     depends_on:
       - rabbitmq
@@ -41,8 +37,6 @@ services:
     command: celery -A website worker -l info
     container_name: celery_worker
     image: django-image
-    networks:
-      - main
     depends_on:
       - rabbitmq
       - django
@@ -51,6 +45,3 @@ volumes:
   media_volume:
   static_volume:
   database_volume:
-
-networks:
-  main:
