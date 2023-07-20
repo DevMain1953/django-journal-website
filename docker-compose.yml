@@ -30,9 +30,9 @@ services:
     ports:
       - "8000:8000"
     image: django-image
-    hostname: django
     networks:
       - main
+    network_mode: "host"
     depends_on:
       - rabbitmq
 
@@ -41,7 +41,6 @@ services:
     command: celery -A website worker -l info
     container_name: celery_worker
     image: django-image
-    hostname: celery_worker
     networks:
       - main
     depends_on:
