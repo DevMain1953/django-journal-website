@@ -27,7 +27,6 @@ services:
       - database_volume:/website/journal_website/database
     ports:
       - "8000:8000"
-    image: django-image
     depends_on:
       - rabbitmq
 
