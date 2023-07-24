@@ -35,6 +35,8 @@ services:
   celery_worker:
     command: celery -A website worker -l info
     container_name: celery_worker
+    volumes:
+      - database_volume:/website/journal_website/database
     image: django-image
     depends_on:
       - rabbitmq
