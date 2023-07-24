@@ -19,6 +19,7 @@ services:
   # WEB
   django:
     build: .
+    image: django-image
     command: python3.11 manage.py runserver 0.0.0.0:8000
     container_name: django
     volumes:
@@ -29,6 +30,15 @@ services:
       - "8000:8000"
     depends_on:
       - rabbitmq
+
+  # Celery worker
+  celery_worker:
+    command: celery -A website worker -l info
+    container_name: celery_worker
+    image: django-image
+    depends_on:
+      - rabbitmq
+      - django
 
 volumes:
   media_volume:
