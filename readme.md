@@ -2,8 +2,10 @@
 
 Scientific journal website, entities in database are made simpler to reduce development complexity.
 
-TODOs:
-- reduce number of lines of code in ```views.py``` (move the request handling functionality to specific class).
+TODOs / code refactoring:
+- reduce number of lines of code in ```views.py``` (move the request handling functionality to specific class);
+- remove warnings in logs about using raw QuerySet object in templates;
+- replace pks with ids for queries to database in repositories.
 
 ## How to install and run
 
