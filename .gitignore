@@ -1,4 +1,5 @@
 /website/journal_website/media/*
+/website/journal_website/database/*
 
 /website/website/__pycache__/*
 /website/journal_website/__pycache__/*
