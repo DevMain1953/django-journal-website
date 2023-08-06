@@ -16,16 +16,16 @@ from .managers import FileManager, ArticleManager
 from .repositories import UserAdditionalDataRepository, ArticleRepository, ScientificPublicationRepository, VolumeRepository, CategoryRepository, UserRepository, FeedbackRepository
 from .tasks import send_email_message_to_user_with_activation_link, send_email_message_to_user_with_password_reset_link, send_notification_email_to_user
 
-file_manager = FileManager.FileManager()
-article_manager = ArticleManager.ArticleManager()
+file_manager = FileManager()
+article_manager = ArticleManager()
 
-user_additional_data = UserAdditionalDataRepository.UserAdditionalDataRepository()
-article = ArticleRepository.ArticleRepository()
-scientific_publication = ScientificPublicationRepository.ScientificPublicationRepository()
-volume = VolumeRepository.VolumeRepository()
-category = CategoryRepository.CategoryRepository()
-feedback = FeedbackRepository.FeedbackRepository()
-user = UserRepository.UserRepository()
+user_additional_data = UserAdditionalDataRepository()
+article = ArticleRepository()
+scientific_publication = ScientificPublicationRepository()
+volume = VolumeRepository()
+category = CategoryRepository()
+feedback = FeedbackRepository()
+user = UserRepository()
 
 
 def display_homepage(request: WSGIRequest) -> HttpResponse:

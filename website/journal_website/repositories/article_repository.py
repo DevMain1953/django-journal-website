@@ -3,14 +3,14 @@ from django.db.models.query import QuerySet
 from django.utils.functional import SimpleLazyObject
 from datetime import datetime
 
-from . import StringRepository
+from .string_repository import StringRepository
 from ..models import Article, Volume, Category
 
 
 class ArticleRepository:
     def __init__(self):
         self.__article_model = Article
-        self.__string = StringRepository.StringRepository()
+        self.__string = StringRepository()
 
     def get_all_articles(self) -> QuerySet:
         return self.__article_model.objects.all().order_by("pk")

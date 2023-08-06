@@ -3,14 +3,14 @@ from django.utils.functional import SimpleLazyObject
 from django.db.models.query import QuerySet
 from datetime import datetime
 
-from . import ArticleRepository
+from .article_repository import ArticleRepository
 from ..models import Feedback, Article
 
 
 class FeedbackRepository:
     def __init__(self):
         self.__feedback_model = Feedback
-        self.__article = ArticleRepository.ArticleRepository()
+        self.__article = ArticleRepository()
 
     def get_feedback_by_id(self, id: int) -> Feedback:
         return self.__feedback_model.objects.get(pk=id)

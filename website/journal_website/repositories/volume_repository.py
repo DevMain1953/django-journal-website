@@ -1,6 +1,6 @@
-from ..models import Volume, ScientificPublication
-
 from django.db.models.query import QuerySet
+
+from ..models import Volume, ScientificPublication
 
 
 class VolumeRepository:
