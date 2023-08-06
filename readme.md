@@ -5,7 +5,7 @@ Scientific journal website, entities in database are made simpler to reduce deve
 TODOs / code refactoring:
 - reduce number of lines of code in ```views.py``` (move the request handling functionality to specific class) **OR** in case of context change, replace function based views with class based views;
 - remove warnings in logs about using unordered list of objects (QuerySet) for pagination in templates;
-- test the replacing ```pk```s with ```ids``` for queries to database in repositories and views because of [this](https://stackoverflow.com/a/53100893/11152224);
+- test the replacing ```pks``` with ```ids``` for queries to database in repositories and views because of [this](https://stackoverflow.com/a/53100893/11152224);
 - change SQLite to PostgreSQL.
 
 ## How to install and run
