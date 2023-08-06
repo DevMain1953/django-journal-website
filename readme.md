@@ -11,7 +11,7 @@ TODOs / code refactoring:
 ## How to install and run
 
 - clone this repository using `git clone <link>` command
-- you need docker to be installed, run the command below, this will download all necessary images and build current application image with all dependencies.
+- you need docker to be installed, run the command below, this will download necessary images and build current application image with all dependencies.
 ```
 docker compose up
 ```
