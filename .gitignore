@@ -1,1 +1,9 @@
 /website/journal_website/media/*
+
+/website/website/__pycache__/*
+/website/journal_website/__pycache__/*
+/website/journal_website/managers/__pycache__/*
+/website/journal_website/migrations/__pycache__/*
+/website/journal_website/repositories/__pycache__/*
+/website/journal_website/templatetags/__pycache__/*
+/website/journal_website/tests/__pycache__/*
