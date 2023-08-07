@@ -1,4 +1,4 @@
-## About project
+# Overview
 
 Scientific journal website, entities in database are made simpler to reduce development complexity. Website allows authors publish their articles in ```docx``` format, application will automatically process the file and save main attributes of article to database in two languages if it's possible. For reviewers, application allows to read articles and give feedbacks to authors. When feedback is posted, author receives email message with link to it. If article has more positive feedbacks than negative ones, status of article will be "Accepted".
 
@@ -8,7 +8,7 @@ TODOs / code refactoring:
 - test the replacing ```pks``` with ```ids``` for queries to database in repositories and views because of [this](https://stackoverflow.com/a/53100893/11152224);
 - change SQLite to PostgreSQL.
 
-## How to install and run
+# Installation
 
 - clone this repository using `git clone <link>` command
 - you need docker to be installed, run the command below, this will download necessary images and build current application image with all dependencies.
