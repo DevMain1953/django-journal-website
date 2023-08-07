@@ -27,6 +27,6 @@ urlpatterns = [
 
     path("registration", views.register_new_user, name="registration"),
     path("authorization", views.authorize_user, name="authorization"),
-    path("logout", views.logout_user, name= "logout"),
+    path("logout", views.logout_user, name="logout"),
     path("password-reset", views.reset_password, name="password_reset")
 ]
