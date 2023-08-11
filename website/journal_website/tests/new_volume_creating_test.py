@@ -4,7 +4,7 @@ from ..repositories import StringRepository
 from ..models import ScientificPublication, StaticPage, Volume
 
 
-string_repository = StringRepository.StringRepository()
+string_repository = StringRepository()
 
 
 class NewVolumeCreatingTest(TestCase):

@@ -4,7 +4,7 @@ from ..repositories import StringRepository
 from ..models import String
 
 
-string_repository = StringRepository.StringRepository()
+string_repository = StringRepository()
 
 
 class InitialStringsTest(TestCase):

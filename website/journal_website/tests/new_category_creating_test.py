@@ -4,7 +4,7 @@ from ..repositories import StringRepository
 from ..models import ScientificPublication, StaticPage, Category, ScientificSpecialty
 
 
-string_repository = StringRepository.StringRepository()
+string_repository = StringRepository()
 
 
 class NewCategoryCreatingTest(TestCase):
