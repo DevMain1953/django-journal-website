@@ -4,11 +4,9 @@ from ..repositories import StringRepository
 from ..models import String
 
 
-string_repository = StringRepository()
-
-
 class InitialStringsTest(TestCase):
     def setUp(self):
+        string_repository = StringRepository()
         string_repository.add_new_string("Научное издание", "Scientific publication")
         string_repository.add_new_string("Научная специальность", "Scientific specialty")
         string_repository.add_new_string("Статическая страница", "Static page")

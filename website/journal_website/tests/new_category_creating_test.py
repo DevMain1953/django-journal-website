@@ -4,11 +4,9 @@ from ..repositories import StringRepository
 from ..models import ScientificPublication, StaticPage, Category, ScientificSpecialty
 
 
-string_repository = StringRepository()
-
-
 class NewCategoryCreatingTest(TestCase):
     def setUp(self):
+        string_repository = StringRepository()
         new_name_of_scientific_publication = string_repository.add_new_string("Научное издание", "Scientific publication")
         new_name_of_scientific_specialty = string_repository.add_new_string("Научная специальность", "Scientific specialty")
         new_name_of_static_page = string_repository.add_new_string("Статическая страница", "Static page")

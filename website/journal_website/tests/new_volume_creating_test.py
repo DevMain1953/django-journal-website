@@ -4,11 +4,9 @@ from ..repositories import StringRepository
 from ..models import ScientificPublication, StaticPage, Volume
 
 
-string_repository = StringRepository()
-
-
 class NewVolumeCreatingTest(TestCase):
     def setUp(self):
+        string_repository = StringRepository()
         new_name_of_scientific_publication = string_repository.add_new_string("Научное издание", "Scientific publication")
         new_name_of_static_page = string_repository.add_new_string("Статическая страница", "Static page")
         new_name_of_volume = string_repository.add_new_string("Первый раздел", "First volume")
